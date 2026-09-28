@@ -1,0 +1,1318 @@
+<title>Framehand</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,600;12..96,700;12..96,800&family=Figtree:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  --paper:#F5F6F3; --surface:#FFFFFF; --sunken:#ECEEEA; --ink:#15191C; --ink-2:#2E3538; --muted:#5E6A6B; --line:#E0E4E0;
+  --accent:#0E6B63; --accent-hover:#0B5A53; --accent-ink:#FFFFFF; --accent-soft:#DCEDE9;
+  --film:#E9AE1C; --pencil:#D8452B; --ok:#1F7A4D; --ok-soft:#DDF0E5; --warn:#9A6408; --warn-soft:#FBEFD5; --bad:#B23A2A; --bad-soft:#F8E1DD;
+  --shadow:0 1px 2px rgba(20,30,30,.06),0 6px 24px -8px rgba(20,30,30,.14);
+  --shadow-lg:0 2px 6px rgba(20,30,30,.08),0 24px 60px -20px rgba(20,30,30,.28);
+  --r:14px; --r-sm:10px;
+  --display:"Bricolage Grotesque",ui-sans-serif,system-ui,sans-serif;
+  --body:"Figtree",ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;
+  --mono:"JetBrains Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --paper:#0F1314; --surface:#171C1E; --sunken:#1D2426; --ink:#E9ECEA; --ink-2:#C9D0CE; --muted:#95A2A1; --line:#283134;
+    --accent:#45B5A8; --accent-hover:#5CC6B9; --accent-ink:#062220; --accent-soft:#163330;
+    --film:#F2C04A; --pencil:#EE6A4F; --ok:#5BC48B; --ok-soft:#173226; --warn:#E6B24F; --warn-soft:#352914; --bad:#EE7B69; --bad-soft:#3A1E1A;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 24px -8px rgba(0,0,0,.6);
+    --shadow-lg:0 2px 6px rgba(0,0,0,.4),0 24px 60px -20px rgba(0,0,0,.8);
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --paper:#0F1314; --surface:#171C1E; --sunken:#1D2426; --ink:#E9ECEA; --ink-2:#C9D0CE; --muted:#95A2A1; --line:#283134;
+  --accent:#45B5A8; --accent-hover:#5CC6B9; --accent-ink:#062220; --accent-soft:#163330;
+  --film:#F2C04A; --pencil:#EE6A4F; --ok:#5BC48B; --ok-soft:#173226; --warn:#E6B24F; --warn-soft:#352914; --bad:#EE7B69; --bad-soft:#3A1E1A;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 6px 24px -8px rgba(0,0,0,.6);
+  --shadow-lg:0 2px 6px rgba(0,0,0,.4),0 24px 60px -20px rgba(0,0,0,.8);
+}
+
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{background:var(--paper);color:var(--ink);font:16px/1.55 var(--body);-webkit-font-smoothing:antialiased;margin:0}
+h1,h2,h3,h4{font-family:var(--display);line-height:1.1;margin:0;text-wrap:balance;letter-spacing:-.015em}
+p{margin:0}
+button,input,select,textarea{font:inherit;color:inherit}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:6px}
+.mono{font-family:var(--mono);font-size:.78rem;letter-spacing:.01em}
+.muted{color:var(--muted)}
+.wrap{max-width:1180px;margin:0 auto;padding-inline:20px}
+.eyebrow{font-family:var(--mono);font-size:.74rem;text-transform:uppercase;letter-spacing:.12em;color:var(--muted)}
+.tnum{font-variant-numeric:tabular-nums}
+
+/* header */
+.top{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:color-mix(in srgb,var(--paper) 88%,transparent);backdrop-filter:saturate(1.4) blur(12px);-webkit-backdrop-filter:saturate(1.4) blur(12px);border-bottom:1px solid var(--line)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:64px}
+.logo{display:flex;align-items:center;gap:9px;font:700 1.25rem/1 var(--display);letter-spacing:-.03em;color:var(--ink);text-decoration:none;background:none;border:0;padding:0;cursor:pointer}
+.logo svg{width:26px;height:26px;color:var(--accent)}
+.nav{display:flex;gap:4px;margin-left:auto;align-items:center}
+.nav button{background:none;border:0;padding:8px 12px;border-radius:999px;cursor:pointer;font-weight:500;color:var(--ink-2);display:flex;align-items:center;gap:6px}
+.nav button:hover{background:var(--sunken)}
+.nav button.on{color:var(--ink);background:var(--sunken)}
+.badge-count{min-width:20px;height:20px;border-radius:999px;background:var(--accent);color:var(--accent-ink);font:600 .72rem/20px var(--body);text-align:center;padding:0 6px}
+.nav .hide-sm{}
+@media (max-width:720px){.nav .hide-sm{display:none}.top .wrap{gap:8px}}
+
+/* buttons */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:999px;padding:11px 20px;font-weight:600;cursor:pointer;transition:background .15s,border-color .15s,transform .1s;text-decoration:none;white-space:nowrap}
+.btn:active{transform:translateY(1px)}
+.btn-primary{background:var(--accent);color:var(--accent-ink)}
+.btn-primary:hover{background:var(--accent-hover)}
+.btn-primary[disabled]{opacity:.45;cursor:not-allowed}
+.btn-ghost{background:var(--surface);border-color:var(--line);color:var(--ink)}
+.btn-ghost:hover{border-color:var(--muted)}
+.btn-text{background:none;border:0;color:var(--accent);padding:6px 4px;font-weight:600;cursor:pointer}
+.btn-danger{background:var(--bad);color:#fff}
+.btn-sm{padding:7px 14px;font-size:.9rem}
+.btn svg{width:18px;height:18px}
+
+/* photo tiles */
+.ph{position:relative;overflow:hidden;background:var(--sunken);border-radius:var(--r-sm)}
+.ph img{display:block;width:100%;height:100%;object-fit:cover}
+
+/* ---------- landing ---------- */
+.hero{padding-block:56px 40px}
+.hero-grid{display:grid;grid-template-columns:1.05fr .95fr;gap:56px;align-items:center}
+.hero h1{font-size:clamp(2.4rem,5.2vw,4.1rem);font-weight:750;letter-spacing:-.035em;line-height:1.02;margin-top:14px}
+.hero h1 em{font-style:normal;color:var(--accent)}
+.hero .lede{font-size:1.13rem;color:var(--ink-2);max-width:34em;margin-top:18px}
+.live{display:inline-flex;align-items:center;gap:8px}
+.live i{width:8px;height:8px;border-radius:50%;background:var(--ok);box-shadow:0 0 0 4px var(--ok-soft)}
+.search{margin-top:28px;background:var(--surface);border:1px solid var(--line);border-radius:18px;box-shadow:var(--shadow);display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr);align-items:stretch}
+.search .btn{grid-column:1/-1;margin:0 8px 8px!important;padding-block:13px}
+.search label{border-bottom:0}
+.search label{display:flex;flex-direction:column;padding:10px 16px;border-right:1px solid var(--line);min-width:0}
+.search label:nth-child(3){border-right:0}
+.search label span{font-size:.72rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.search input,.search select{border:0;background:transparent;padding:4px 0;outline:none;font-weight:500;min-width:0;width:100%}
+.search .btn{margin:8px;border-radius:12px}
+.quick{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;align-items:center}
+.quick .muted{font-size:.88rem;margin-right:2px}
+.chip{border:1px solid var(--line);background:var(--surface);padding:6px 12px;border-radius:999px;font-size:.88rem;cursor:pointer;color:var(--ink-2);font-weight:500}
+.chip:hover{border-color:var(--muted)}
+.chip.on{background:var(--ink);border-color:var(--ink);color:var(--paper)}
+
+.sheet{position:relative;background:#1A1A18;border-radius:6px;padding:26px 18px 18px;box-shadow:var(--shadow-lg);transform:rotate(1.2deg)}
+.sheet-head{position:absolute;top:7px;left:18px;right:18px;display:flex;justify-content:space-between;font:500 .64rem/1 var(--mono);color:#C9A54A;letter-spacing:.08em;text-transform:uppercase}
+.sheet-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.frame{position:relative}
+.frame .ph{aspect-ratio:4/5;border-radius:2px}
+.frame figcaption{display:flex;justify-content:space-between;font:500 .6rem/1 var(--mono);color:#C9A54A;margin-top:5px;letter-spacing:.04em}
+.frame figcaption b{font-weight:500;color:#8C877A}
+.pencil{position:absolute;inset:-12px -10px -8px -12px;pointer-events:none;overflow:visible}
+.pencil path{fill:none;stroke:var(--pencil);stroke-width:3.2;stroke-linecap:round;stroke-dasharray:420;stroke-dashoffset:0;animation:draw 1.1s .5s ease-out both}
+@keyframes draw{from{stroke-dashoffset:420}to{stroke-dashoffset:0}}
+.pick-note{position:absolute;right:-8px;bottom:-26px;background:var(--surface);color:var(--ink);border-radius:12px;box-shadow:var(--shadow-lg);padding:12px 14px;display:flex;gap:12px;align-items:center;transform:rotate(-1.2deg);max-width:280px}
+.pick-note .av{width:40px;height:40px}
+.pick-note strong{display:block;font-size:.95rem;line-height:1.2}
+.pick-note .mono{color:var(--muted)}
+
+.trust{display:flex;flex-wrap:wrap;gap:12px 36px;padding-block:28px;border-block:1px solid var(--line);margin-top:48px}
+.trust div{display:flex;gap:10px;align-items:center;font-weight:500;color:var(--ink-2)}
+.trust svg{width:20px;height:20px;color:var(--accent);flex:none}
+
+.section{padding-block:56px}
+.sec-head{display:flex;justify-content:space-between;align-items:end;gap:16px;margin-bottom:24px;flex-wrap:wrap}
+.sec-head h2{font-size:clamp(1.6rem,3vw,2.2rem);font-weight:700}
+.sec-head p{color:var(--muted);margin-top:6px}
+
+.cats{display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
+.cat{background:none;border:0;padding:0;text-align:left;cursor:pointer;color:inherit}
+.cat .ph{aspect-ratio:4/3;border-radius:var(--r);transition:transform .25s}
+.cat:hover .ph{transform:translateY(-3px)}
+.cat h3{font-size:1.08rem;font-weight:650;margin-top:10px}
+.cat p{font-size:.88rem;color:var(--muted)}
+
+.tasks{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.task{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:flex;flex-direction:column;gap:10px;cursor:pointer;text-align:left;transition:border-color .15s,box-shadow .15s}
+.task:hover{border-color:var(--muted);box-shadow:var(--shadow)}
+.task h3{font-size:1.1rem;font-weight:650}
+.task .spec{display:flex;flex-wrap:wrap;gap:6px 14px;color:var(--muted);font-size:.88rem}
+.task .foot{display:flex;justify-content:space-between;align-items:center;margin-top:auto;padding-top:8px;border-top:1px dashed var(--line)}
+.price{font:700 1.15rem/1 var(--display)}
+.price small{font:500 .8rem var(--body);color:var(--muted)}
+
+.how{display:grid;grid-template-columns:repeat(3,1fr);gap:28px;counter-reset:s}
+.how li{list-style:none;padding-top:18px;border-top:2px solid var(--ink)}
+.how li::before{counter-increment:s;content:"Step " counter(s);font:500 .74rem var(--mono);text-transform:uppercase;letter-spacing:.12em;color:var(--accent)}
+.how h3{font-size:1.25rem;margin-block:8px 6px}
+.how p{color:var(--ink-2)}
+.how{padding:0;margin:0}
+
+.quotes{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.quote{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:22px;display:flex;flex-direction:column;gap:16px}
+.quote blockquote{margin:0;font-size:1.02rem;color:var(--ink-2)}
+.quote footer{display:flex;gap:10px;align-items:center;margin-top:auto;font-size:.9rem}
+.quote footer .av{width:34px;height:34px;font-size:.75rem}
+
+.pro-cta{background:var(--ink);color:var(--paper);border-radius:22px;padding:40px;display:grid;grid-template-columns:1.3fr 1fr;gap:32px;align-items:center}
+.pro-cta h2{font-size:clamp(1.6rem,3vw,2.3rem)}
+.pro-cta p{opacity:.78;margin-top:10px}
+.pro-cta .stats{display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.pro-cta .stats b{display:block;font:700 1.9rem/1 var(--display)}
+.pro-cta .stats span{font-size:.85rem;opacity:.7}
+.pro-cta .btn-primary{margin-top:20px}
+
+footer.site{border-top:1px solid var(--line);padding-block:28px 40px;margin-top:40px;color:var(--muted);font-size:.88rem}
+footer.site .wrap{display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap}
+
+/* avatar */
+.av{border-radius:50%;display:grid;place-items:center;color:#fff;font:700 .95rem/1 var(--display);flex:none;width:48px;height:48px;letter-spacing:.02em}
+
+/* stars */
+.rating{display:inline-flex;align-items:center;gap:4px;font-weight:600}
+.rating svg{width:15px;height:15px;color:var(--film)}
+.rating small{color:var(--muted);font-weight:400}
+
+/* ---------- browse ---------- */
+.browse{display:grid;grid-template-columns:260px 1fr;gap:32px;padding-block:32px 60px}
+.filters{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);align-self:start;display:flex;flex-direction:column;gap:22px}
+.fgroup h4{font:600 .74rem var(--body);text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:10px}
+.fchips{display:flex;flex-wrap:wrap;gap:6px}
+.fchips .chip{font-size:.83rem;padding:5px 10px}
+input[type=range]{width:100%;accent-color:var(--accent)}
+.range-val{display:flex;justify-content:space-between;font-size:.85rem;color:var(--muted);margin-top:4px}
+.check{display:flex;gap:10px;align-items:flex-start;cursor:pointer;font-size:.93rem}
+.check input{accent-color:var(--accent);width:18px;height:18px;margin-top:2px;flex:none}
+.select{border:1px solid var(--line);background:var(--surface);border-radius:10px;padding:9px 12px;width:100%}
+.results-head{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+.results-head h1{font-size:1.7rem;font-weight:700}
+.results-head .select{width:auto}
+.filter-toggle{display:none}
+.list{display:flex;flex-direction:column;gap:16px}
+.pro-card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;display:grid;grid-template-columns:1fr 190px;gap:20px;transition:box-shadow .2s,border-color .2s}
+.pro-card:hover{box-shadow:var(--shadow);border-color:color-mix(in srgb,var(--line) 50%,var(--muted))}
+.pc-top{display:flex;gap:14px;align-items:center}
+.pc-top h3{font-size:1.2rem;font-weight:650;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.pc-top h3 button{all:unset;cursor:pointer}
+.pc-top h3 button:hover{text-decoration:underline}
+.pc-top h3 button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.pc-meta{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.88rem;color:var(--muted);margin-top:3px;align-items:center}
+.pc-meta span{display:inline-flex;align-items:center;gap:4px}
+.pc-meta svg{width:14px;height:14px}
+.tag{display:inline-flex;align-items:center;gap:4px;font:600 .7rem/1 var(--body);text-transform:uppercase;letter-spacing:.07em;padding:5px 8px;border-radius:6px;background:var(--accent-soft);color:var(--accent)}
+.tag.film{background:var(--warn-soft);color:var(--warn)}
+.strip{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.strip .ph{aspect-ratio:1;cursor:zoom-in;border:0;padding:0}
+.pitch{margin-top:14px;font-size:.94rem;color:var(--ink-2);background:var(--sunken);border-radius:10px;padding:10px 14px}
+.pitch b{font-weight:600;color:var(--ink)}
+.pc-side{display:flex;flex-direction:column;gap:10px;border-left:1px solid var(--line);padding-left:20px}
+.pc-side .price{font-size:1.6rem}
+.next{display:flex;align-items:center;gap:6px;font-size:.88rem;color:var(--ok);font-weight:600}
+.next svg{width:15px;height:15px}
+.pc-side .btn{width:100%}
+.pc-side .spacer{flex:1}
+.skel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);height:260px;position:relative;overflow:hidden}
+.skel::after{content:"";position:absolute;inset:0;background:linear-gradient(100deg,transparent 30%,var(--sunken) 50%,transparent 70%);background-size:200% 100%;animation:shim 1s linear infinite}
+@keyframes shim{from{background-position:150% 0}to{background-position:-50% 0}}
+.empty{text-align:center;padding:60px 20px;background:var(--surface);border:1px dashed var(--line);border-radius:var(--r)}
+.empty h3{font-size:1.3rem;margin-bottom:8px}
+.empty p{color:var(--muted);margin-bottom:18px}
+
+/* ---------- profile ---------- */
+.crumbs{display:flex;gap:8px;align-items:center;font-size:.9rem;color:var(--muted);padding-top:24px;flex-wrap:wrap}
+.crumbs button{all:unset;cursor:pointer;color:var(--accent);font-weight:500}
+.crumbs button:focus-visible{outline:2px solid var(--accent)}
+.profile{display:grid;grid-template-columns:1fr 360px;gap:40px;padding-block:20px 60px}
+.p-head{display:flex;gap:20px;align-items:center;flex-wrap:wrap}
+.p-head .av{width:84px;height:84px;font-size:1.6rem}
+.p-head h1{font-size:clamp(1.8rem,3.4vw,2.5rem);font-weight:750}
+.gallery{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-rows:150px;gap:8px;margin-top:28px}
+.gallery .ph{border:0;padding:0;cursor:zoom-in}
+.gallery .ph:nth-child(1){grid-column:span 2;grid-row:span 2}
+.gallery .ph:nth-child(6){grid-column:span 2}
+.gallery .ph .exif{position:absolute;left:8px;bottom:8px;z-index:2;background:rgba(0,0,0,.55);color:#EDE6D2;padding:3px 6px;border-radius:4px;font:500 .62rem/1.2 var(--mono);opacity:0;transition:opacity .2s}
+.gallery .ph:hover .exif,.gallery .ph:focus-visible .exif{opacity:1}
+.block{margin-top:40px}
+.block h2{font-size:1.4rem;font-weight:700;margin-bottom:14px}
+.about{color:var(--ink-2);max-width:62ch}
+.facts{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--line);border:1px solid var(--line);border-radius:var(--r);overflow:hidden;margin-top:20px}
+.facts div{background:var(--surface);padding:14px 16px}
+.facts b{display:block;font:700 1.25rem/1.1 var(--display)}
+.facts span{font-size:.82rem;color:var(--muted)}
+.gear{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px}
+.gear span{font:500 .76rem var(--mono);padding:6px 10px;border:1px solid var(--line);border-radius:6px;background:var(--surface);color:var(--ink-2)}
+.pkgs{display:grid;gap:12px}
+.pkg{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;grid-template-columns:1fr auto;gap:8px 20px;align-items:center}
+.pkg h3{font-size:1.08rem;font-weight:650}
+.pkg ul{margin:6px 0 0;padding:0;list-style:none;display:flex;flex-wrap:wrap;gap:4px 16px;font-size:.88rem;color:var(--muted)}
+.pkg ul li{display:flex;gap:5px;align-items:center}
+.pkg ul svg{width:14px;height:14px;color:var(--accent)}
+.pkg .right{text-align:right;display:flex;flex-direction:column;gap:8px;align-items:flex-end}
+.reviews{display:grid;gap:0}
+.review{padding-block:18px;border-bottom:1px solid var(--line)}
+.review:first-child{padding-top:0}
+.review header{display:flex;gap:10px;align-items:center;margin-bottom:8px;flex-wrap:wrap}
+.review header .av{width:34px;height:34px;font-size:.74rem}
+.review header strong{font-weight:600}
+.review header .when{color:var(--muted);font-size:.85rem}
+.review p{color:var(--ink-2)}
+.stars{display:inline-flex;gap:1px}
+.stars svg{width:14px;height:14px;color:var(--film)}
+.stars svg.off{color:var(--line)}
+.side{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);align-self:start}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow)}
+.card h3{font-size:1.15rem}
+.slots{display:flex;flex-wrap:wrap;gap:6px;margin-block:10px 16px}
+.slot-mini{border:1px solid var(--line);background:var(--paper);border-radius:8px;padding:7px 10px;font-size:.84rem;cursor:pointer;font-weight:500}
+.slot-mini:hover{border-color:var(--accent);color:var(--accent)}
+.guarantee{display:flex;gap:10px;font-size:.85rem;color:var(--muted);margin-top:14px;align-items:flex-start}
+.guarantee svg{width:18px;height:18px;color:var(--accent);flex:none;margin-top:1px}
+
+/* ---------- booking ---------- */
+.book{display:grid;grid-template-columns:1fr 340px;gap:40px;padding-block:24px 80px}
+.progress{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-block:18px 28px;padding:0;list-style:none}
+.progress li{font-size:.84rem;color:var(--muted);font-weight:500}
+.progress li::before{content:"";display:block;height:4px;border-radius:4px;background:var(--line);margin-bottom:8px;transition:background .3s}
+.progress li.done::before,.progress li.cur::before{background:var(--accent)}
+.progress li.cur{color:var(--ink);font-weight:600}
+.step h1{font-size:clamp(1.6rem,3vw,2.1rem);font-weight:700}
+.step > p.muted{margin-top:6px}
+.opts{display:grid;gap:12px;margin-top:22px}
+.opt{display:grid;grid-template-columns:22px 1fr auto;gap:14px;align-items:start;background:var(--surface);border:1.5px solid var(--line);border-radius:var(--r);padding:16px 18px;cursor:pointer;text-align:left;width:100%;transition:border-color .15s,background .15s}
+.opt:hover{border-color:var(--muted)}
+.opt.on{border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 45%,var(--surface))}
+.radio{width:20px;height:20px;border-radius:50%;border:2px solid var(--line);margin-top:2px;display:grid;place-items:center}
+.opt.on .radio{border-color:var(--accent)}
+.opt.on .radio::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent)}
+.opt h3{font-size:1.05rem;font-weight:650}
+.opt p{font-size:.88rem;color:var(--muted);margin-top:2px}
+.opt .price{font-size:1.15rem}
+.hours{display:flex;align-items:center;gap:10px;margin-top:10px}
+.hours button{width:32px;height:32px;border-radius:50%;border:1px solid var(--line);background:var(--surface);cursor:pointer;font-weight:700}
+.days{display:grid;grid-auto-flow:column;grid-auto-columns:76px;gap:8px;overflow-x:auto;padding-bottom:8px;margin-top:22px;scroll-snap-type:x mandatory}
+.day{scroll-snap-align:start;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:10px 0;text-align:center;cursor:pointer;display:flex;flex-direction:column;gap:2px}
+.day span{font-size:.72rem;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);font-weight:600}
+.day b{font:700 1.35rem/1.1 var(--display)}
+.day small{font-size:.7rem;color:var(--ok);font-weight:600}
+.day.on{border-color:var(--accent);background:var(--accent);color:var(--accent-ink)}
+.day.on span,.day.on small{color:var(--accent-ink);opacity:.85}
+.day[disabled]{opacity:.4;cursor:not-allowed}
+.day[disabled] small{color:var(--muted)}
+.times{display:grid;grid-template-columns:repeat(auto-fill,minmax(110px,1fr));gap:8px;margin-top:18px}
+.time{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:11px 8px;cursor:pointer;font-weight:600;font-variant-numeric:tabular-nums}
+.time:hover:not([disabled]){border-color:var(--muted)}
+.time.on{border-color:var(--accent);background:var(--accent-soft);color:var(--accent)}
+.time[disabled]{color:var(--muted);text-decoration:line-through;background:var(--sunken);cursor:not-allowed;border-color:transparent}
+.field{display:flex;flex-direction:column;gap:6px;margin-top:20px}
+.field label{font-weight:600;font-size:.93rem}
+.field .hint{font-size:.83rem;color:var(--muted)}
+.input,.textarea{border:1.5px solid var(--line);background:var(--surface);border-radius:10px;padding:11px 14px;outline:none;width:100%}
+.input:focus,.textarea:focus{border-color:var(--accent)}
+.textarea{min-height:120px;resize:vertical}
+.input.err{border-color:var(--bad)}
+.errmsg{color:var(--bad);font-size:.85rem}
+.suggest{display:flex;flex-wrap:wrap;gap:6px}
+.suggest .chip{font-size:.82rem;padding:5px 10px}
+.addons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:10px}
+.addon{display:flex;gap:10px;align-items:flex-start;border:1.5px solid var(--line);background:var(--surface);border-radius:12px;padding:12px 14px;cursor:pointer}
+.addon:has(input:checked){border-color:var(--accent);background:color-mix(in srgb,var(--accent-soft) 45%,var(--surface))}
+.addon input{accent-color:var(--accent);width:18px;height:18px;margin-top:2px;flex:none}
+.addon b{display:block;font-weight:600;font-size:.94rem}
+.addon span{font-size:.83rem;color:var(--muted)}
+.rev-list{display:grid;gap:0;margin-top:20px;background:var(--surface);border:1px solid var(--line);border-radius:var(--r)}
+.rev-row{display:grid;grid-template-columns:130px 1fr auto;gap:14px;padding:14px 18px;border-bottom:1px solid var(--line);align-items:start}
+.rev-row:last-child{border-bottom:0}
+.rev-row dt{color:var(--muted);font-size:.9rem}
+.rev-row dd{margin:0;font-weight:500;white-space:pre-wrap;word-break:break-word}
+.demo-pay{margin-top:18px;display:flex;gap:12px;align-items:center;padding:14px 16px;border-radius:12px;background:var(--warn-soft);color:var(--warn);font-size:.9rem;font-weight:500}
+.demo-pay svg{width:20px;height:20px;flex:none}
+.wiz-nav{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-top:32px;padding-top:20px;border-top:1px solid var(--line)}
+.summary .who{display:flex;gap:12px;align-items:center;padding-bottom:14px;border-bottom:1px solid var(--line)}
+.summary .who strong{display:block}
+.lines{display:grid;gap:8px;padding-block:14px;border-bottom:1px solid var(--line);font-size:.93rem}
+.lines div{display:flex;justify-content:space-between;gap:10px}
+.lines div span:first-child{color:var(--muted)}
+.lines div span:last-child{font-variant-numeric:tabular-nums;text-align:right}
+.total{display:flex;justify-content:space-between;align-items:baseline;padding-top:14px}
+.total b{font:700 1.5rem/1 var(--display);font-variant-numeric:tabular-nums}
+.mobile-bar{display:none}
+
+/* ---------- confirmation ---------- */
+.done{display:grid;grid-template-columns:1fr 380px;gap:40px;padding-block:40px 80px}
+.done-hero{display:flex;gap:18px;align-items:flex-start}
+.done-check{width:56px;height:56px;border-radius:50%;background:var(--accent);color:var(--accent-ink);display:grid;place-items:center;flex:none;animation:pop .45s cubic-bezier(.3,1.6,.5,1)}
+.done-check svg{width:28px;height:28px}
+@keyframes pop{from{transform:scale(.4);opacity:0}to{transform:scale(1);opacity:1}}
+.done h1{font-size:clamp(1.8rem,3.4vw,2.4rem);font-weight:750}
+.ref{display:inline-flex;gap:8px;align-items:center;margin-top:8px}
+.timeline{list-style:none;margin:28px 0 0;padding:0;display:grid;gap:0}
+.timeline li{display:grid;grid-template-columns:28px 1fr;gap:14px;padding-bottom:22px;position:relative}
+.timeline li::before{content:"";position:absolute;left:13px;top:28px;bottom:0;width:2px;background:var(--line)}
+.timeline li:last-child::before{display:none}
+.timeline .dot{width:28px;height:28px;border-radius:50%;border:2px solid var(--line);background:var(--surface);display:grid;place-items:center}
+.timeline .dot svg{width:14px;height:14px}
+.timeline li.ok .dot{background:var(--accent);border-color:var(--accent);color:var(--accent-ink)}
+.timeline li.now .dot{border-color:var(--accent)}
+.timeline li.now .dot::after{content:"";width:10px;height:10px;border-radius:50%;background:var(--accent);animation:pulse 1.4s infinite}
+@keyframes pulse{50%{opacity:.3}}
+.timeline b{display:block;font-weight:600}
+.timeline span{color:var(--muted);font-size:.9rem}
+.actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:8px}
+.chat{display:flex;flex-direction:column;height:520px;padding:0;overflow:hidden}
+.chat-head{display:flex;gap:12px;align-items:center;padding:14px 16px;border-bottom:1px solid var(--line)}
+.chat-head .av{width:38px;height:38px;font-size:.8rem}
+.chat-head strong{display:block;line-height:1.2}
+.chat-head .mono{color:var(--ok)}
+.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:10px;background:var(--paper)}
+.msg{max-width:82%;padding:9px 13px;border-radius:16px;font-size:.93rem;line-height:1.45;word-wrap:break-word}
+.msg.them{background:var(--surface);border:1px solid var(--line);border-bottom-left-radius:4px;align-self:flex-start}
+.msg.me{background:var(--accent);color:var(--accent-ink);border-bottom-right-radius:4px;align-self:flex-end}
+.msg.sys{align-self:center;background:none;color:var(--muted);font-size:.78rem;font-family:var(--mono);padding:2px}
+.typing{display:inline-flex;gap:4px}
+.typing i{width:6px;height:6px;border-radius:50%;background:var(--muted);animation:bounce 1s infinite}
+.typing i:nth-child(2){animation-delay:.15s}.typing i:nth-child(3){animation-delay:.3s}
+@keyframes bounce{50%{transform:translateY(-4px);opacity:.5}}
+.chat form{display:flex;gap:8px;padding:12px;border-top:1px solid var(--line)}
+.chat form .input{border-radius:999px;padding:9px 16px}
+.chat form .btn{padding:9px 16px}
+
+/* ---------- bookings ---------- */
+.tabs{display:inline-flex;background:var(--sunken);border-radius:999px;padding:4px;gap:2px;margin-block:18px 22px}
+.tabs button{border:0;background:none;padding:8px 18px;border-radius:999px;font-weight:600;cursor:pointer;color:var(--muted)}
+.tabs button.on{background:var(--surface);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+.bk{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;display:grid;grid-template-columns:96px 1fr auto;gap:18px;align-items:start}
+.bk > .ph{width:96px;height:96px}
+.bk h3{font-size:1.1rem;font-weight:650}
+.bk .meta{display:flex;flex-wrap:wrap;gap:4px 16px;color:var(--muted);font-size:.9rem;margin-top:4px}
+.bk .meta span{display:inline-flex;gap:5px;align-items:center}
+.bk .meta svg{width:14px;height:14px}
+.bk .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px}
+.pill{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;padding:4px 10px;border-radius:999px;white-space:nowrap}
+.pill::before{content:"";width:7px;height:7px;border-radius:50%;background:currentColor}
+.pill.requested{background:var(--warn-soft);color:var(--warn)}
+.pill.confirmed{background:var(--ok-soft);color:var(--ok)}
+.pill.cancelled{background:var(--bad-soft);color:var(--bad)}
+.pill.completed{background:var(--sunken);color:var(--muted)}
+.confirm-box{margin-top:14px;padding:14px;border-radius:12px;background:var(--bad-soft);display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between}
+.confirm-box p{color:var(--ink);font-size:.92rem;font-weight:500}
+.review-box{margin-top:14px;padding:16px;border-radius:12px;background:var(--sunken);display:grid;gap:10px}
+.star-pick{display:flex;gap:4px}
+.star-pick button{background:none;border:0;padding:2px;cursor:pointer;color:var(--line)}
+.star-pick button.on{color:var(--film)}
+.star-pick svg{width:26px;height:26px}
+.delivered{display:flex;gap:6px;margin-top:12px}
+.delivered .ph{width:54px;height:54px;border-radius:6px}
+
+/* modal / lightbox / toast */
+.lb{position:fixed;inset:0;z-index:80;background:rgba(8,10,10,.9);display:grid;place-items:center;padding:24px}
+.lb figure{margin:0;max-width:min(92vw,720px);width:100%}
+.lb .ph{background:none;display:flex;justify-content:center;border-radius:6px}
+.lb .ph img{width:auto;max-width:100%;height:auto;max-height:76vh;object-fit:contain;border-radius:6px}
+.lb figcaption{display:flex;justify-content:space-between;gap:12px;color:#D9D3C2;margin-top:10px;font:500 .78rem var(--mono);flex-wrap:wrap}
+.lb .x,.lb .nav-l,.lb .nav-r{position:absolute;background:rgba(255,255,255,.12);border:0;color:#fff;width:44px;height:44px;border-radius:50%;cursor:pointer;display:grid;place-items:center}
+.lb .x{top:calc(env(safe-area-inset-top,0px) + 16px);right:16px}
+.lb .nav-l{left:16px;top:50%}
+.lb .nav-r{right:16px;top:50%}
+.lb svg{width:22px;height:22px}
+.toast{position:fixed;left:50%;bottom:calc(env(safe-area-inset-bottom,0px) + 24px);transform:translate(-50%,20px);background:var(--ink);color:var(--paper);padding:12px 18px;border-radius:12px;font-weight:500;box-shadow:var(--shadow-lg);opacity:0;pointer-events:none;transition:opacity .25s,transform .25s;z-index:90;max-width:calc(100vw - 32px);display:flex;gap:10px;align-items:center}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast svg{width:18px;height:18px;color:var(--film);flex:none}
+
+.fade{animation:fadeIn .35s ease-out}
+@keyframes fadeIn{from{opacity:.001;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* responsive */
+@media (max-width:980px){
+  .hero-grid{grid-template-columns:1fr;gap:48px}
+  .sheet{max-width:520px}
+  .cats{grid-template-columns:repeat(2,1fr)}
+  .tasks,.quotes{grid-template-columns:1fr 1fr}
+  .browse{grid-template-columns:1fr}
+  .filters{position:static;display:none;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px}
+  .filters.open{display:flex}
+  .filter-toggle{display:inline-flex}
+  .profile,.book,.done{grid-template-columns:1fr}
+  .side{position:static}
+  .book .summary-col{display:none}
+  .mobile-bar{display:flex;position:fixed;left:0;right:0;bottom:0;z-index:50;background:var(--surface);border-top:1px solid var(--line);padding:12px 16px calc(12px + env(safe-area-inset-bottom,0px));justify-content:space-between;align-items:center;gap:12px;box-shadow:0 -8px 24px -12px rgba(0,0,0,.2)}
+  .mobile-bar b{font:700 1.3rem/1 var(--display)}
+  .book .wiz-nav{display:none}
+  body:has(.mobile-bar) main{padding-bottom:96px}
+  .pro-cta{grid-template-columns:1fr}
+}
+@media (max-width:640px){
+  .wrap{padding-inline:16px}
+  .hero{padding-block:32px 24px}
+  .search{grid-template-columns:1fr 1fr}
+  .search label:first-child{grid-column:1/-1;border-right:0;border-bottom:1px solid var(--line)}
+  .search label:nth-child(2){border-right:1px solid var(--line)}
+  .search .btn{grid-column:1/-1}
+  .sheet{padding:22px 10px 12px}
+  .sheet-grid{gap:6px}
+  .frame figcaption b{display:none}
+  .pick-note{right:0;bottom:-40px}
+  .tasks,.quotes,.how{grid-template-columns:1fr}
+  .cats{gap:12px}
+  .pro-card{grid-template-columns:1fr;padding:16px}
+  .pc-side{border-left:0;padding-left:0;border-top:1px solid var(--line);padding-top:14px;display:grid;grid-template-columns:1fr 1fr;align-items:center}
+  .pc-side .spacer{display:none}
+  .pc-side .btn{grid-column:span 1}
+  .gallery{grid-template-columns:repeat(2,1fr);grid-auto-rows:120px}
+  .gallery .ph:nth-child(6){grid-column:span 1}
+  .facts{grid-template-columns:1fr 1fr}
+  .pkg{grid-template-columns:1fr}
+  .pkg .right{flex-direction:row;justify-content:space-between;align-items:center;text-align:left}
+  .addons{grid-template-columns:1fr}
+  .rev-row{grid-template-columns:1fr auto;gap:4px 12px}
+  .rev-row dt{grid-column:1/-1}
+  .bk{grid-template-columns:64px 1fr;gap:14px}
+  .bk > .ph{width:64px;height:64px}
+  .gallery .ph:nth-child(8){grid-column:span 2}
+  .bk > .pill-col{grid-column:2}
+  .pro-cta{padding:26px}
+  .lb .nav-l,.lb .nav-r{top:auto;bottom:24px}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+}
+</style>
+
+<header class="top">
+  <div class="wrap">
+    <button class="logo" data-go="home" aria-label="Framehand home">
+      <svg viewBox="0 0 32 32" fill="none" stroke="currentColor" stroke-width="2.4" aria-hidden="true"><circle cx="16" cy="16" r="12.5"/><path d="M16 3.5l6.5 11.2M28.3 13.8l-12.9.4M22.8 26.2L16.4 15M9.2 26.5l6.1-11.3M3.6 18.4l12.8-.3M9.4 5.6l6.6 11"/></svg>
+      Framehand
+    </button>
+    <nav class="nav" aria-label="Main">
+      <button data-go="browse" id="nav-browse">Find a photographer</button>
+      <button class="hide-sm" data-action="how">How it works</button>
+      <button data-go="bookings" id="nav-bookings">My bookings <span class="badge-count" id="bk-count" hidden>0</span></button>
+    </nav>
+  </div>
+</header>
+
+<main id="app"></main>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<div class="lb" id="lb" hidden role="dialog" aria-modal="true" aria-label="Photo viewer"></div>
+
+<script>
+(() => {
+/* ============ utilities ============ */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+function hashStr(s){let h=1779033703^s.length;for(let i=0;i<s.length;i++){h=Math.imul(h^s.charCodeAt(i),3432918353);h=h<<13|h>>>19}return h>>>0}
+function rng(seed){let a=hashStr(String(seed));return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+const pick = (r, arr) => arr[Math.floor(r() * arr.length)];
+const money = n => '$' + (Math.round(n * 100) / 100).toFixed(n % 1 ? 2 : 0);
+const money2 = n => '$' + n.toFixed(2);
+const store = {
+  get(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch { return d; } },
+  set(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch {} }
+};
+
+/* ============ icons ============ */
+const I = {
+  star:'<svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2.5l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.4 6.1 20.5l1.2-6.5L2.5 9.4l6.6-.9z"/></svg>',
+  pin:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 21s-7-6.2-7-11.5a7 7 0 0114 0C19 14.8 12 21 12 21z"/><circle cx="12" cy="9.5" r="2.5"/></svg>',
+  clock:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>',
+  check:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12.5l4.5 4.5L19 7.5"/></svg>',
+  arrow:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>',
+  back:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>',
+  shield:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M12 3l8 3v6c0 4.5-3.4 8.3-8 9-4.6-.7-8-4.5-8-9V6z"/><path d="M8.5 12l2.5 2.5 4.5-5"/></svg>',
+  bolt:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" aria-hidden="true"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+  image:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="M21 16l-5-5-9 9"/></svg>',
+  cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg>',
+  x:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg>',
+  chevL:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg>',
+  chevR:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg>',
+  info:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>',
+  chat:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M4 5h16v11H9l-5 4z"/></svg>',
+  filter:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M7 12h10M10 18h4"/></svg>',
+};
+const stars = n => '<span class="stars" aria-label="'+n+' out of 5 stars">' + [1,2,3,4,5].map(i => I.star.replace('<svg', i <= n ? '<svg' : '<svg class="off"')).join('') + '</span>';
+
+/* ============ sample photos (Unsplash, shipped in img/) ============ */
+const PHOTOS = {
+  headshots: ["Joseph Gonzalez", "Michael Dam", "LinkedIn Sales Solutions", "Christina @ wocintechchat.com", "Jurica Koletić", "Clay Elliot"],
+  realestate: ["Deborah Cortelazzi", "Roberto Nickson", "Danilo Rios", "Michael Oxendine", "Francesca Tosolini", "Rafael Hoyos Weht", "Prydumano Design", "Spacejoy"],
+  product: ["Alex Lvrs", "Cierra Henderson", "Reuben Mansell", "Mathilde Langevin", "Alex Lvrs", "Irene Kredenets"],
+  events: ["Nathan Dumlao", "Aneta Pawlik", "OurWhisky Foundation", "Sujan Khalifa", "Arjun MJ", "Onkar Singh"],
+  family: ["Kabo", "Jessica Rockowitz", "Victor G", "Patricia Prudente", "Cole Wyland", "Hana El Zohiry", "Angelos Michalopoulos"],
+  food: ["Caramel", "Davey Gravy", "Brooke Lark", "Albert Vincent Wu", "Shawn", "Gabrielle Henderson", "Oliver Sjoberg", "Ray Albrow"],
+  creator: ["Videodeck", "Videodeck", "Andrés", "Wesley Tingey", "Nubelson Fernandes", "June Aye"],
+  edits: ["Michael Bourgault", "Casey Horner", "Mike Erskine", "NEOM", "Andreas Rasmussen", "Erin DeFuria"]
+};
+const KIND_SET = { portrait:'headshots', room:'realestate', product:'product', event:'events', pet:'family', food:'food', creator:'creator', landscape:'edits' };
+function photoRef(kind, seed){
+  const set = KIND_SET[kind] || kind, list = PHOTOS[set];
+  const i = (typeof seed === 'number' ? seed : hashStr(String(seed))) % list.length;
+  return { src: `img/${set}-${i + 1}.jpg`, credit: list[i] };
+}
+const credit = (kind, seed) => photoRef(kind, seed).credit;
+const img = (kind, seed, alt) => `<img src="${photoRef(kind, seed).src}" alt="${esc(alt)}" loading="lazy" decoding="async">`;
+
+/* ============ data ============ */
+const HOODS = { 'Mission':[2.2,3.4], 'Noe Valley':[1.2,3.6], 'SoMa':[2.8,1.8], 'Hayes Valley':[1.8,2.2], 'Outer Sunset':[-2.8,3.0], 'Japantown':[1.4,1.3], 'Bernal Heights':[2.4,4.5], 'Dogpatch':[3.6,3.4], 'Russian Hill':[2.0,0.2], 'Inner Richmond':[-0.4,1.4], 'Potrero Hill':[3.2,2.9], 'Castro':[1.3,3.0] };
+const dist = (a, b) => { const p = HOODS[a], q = HOODS[b]; if (!p || !q) return null; return Math.max(.3, Math.hypot(p[0]-q[0], p[1]-q[1])); };
+
+const CATS = [
+  { id:'headshots', name:'Headshots', kind:'portrait', blurb:'LinkedIn, dating, actor, team pages', from:95, keys:'headshot portrait linkedin profile team corporate actor' },
+  { id:'realestate', name:'Real estate & Airbnb', kind:'room', blurb:'Listings, rentals, open homes', from:149, keys:'real estate airbnb listing apartment home house rental interior property' },
+  { id:'product', name:'Product & e-commerce', kind:'product', blurb:'Etsy, Shopify, Amazon white-background', from:120, keys:'product ecommerce etsy shopify amazon packshot jewelry candle' },
+  { id:'events', name:'Events & parties', kind:'event', blurb:'Birthdays, launches, meetups', from:160, keys:'event party birthday launch meetup wedding reception gala' },
+  { id:'family', name:'Family & pets', kind:'pet', blurb:'Park sessions, newborns, dogs', from:130, keys:'family pet dog cat kids newborn maternity' },
+  { id:'food', name:'Food & menus', kind:'food', blurb:'Menus, delivery apps, cafés', from:175, keys:'food menu restaurant cafe doordash ubereats dish drink' },
+  { id:'creator', name:'Content creator', kind:'creator', blurb:'Instagram, YouTube thumbnails, brand', from:110, keys:'content creator instagram youtube tiktok brand influencer social' },
+  { id:'edits', name:'Quick edits', kind:'landscape', blurb:'Retouching & color, fully remote', from:35, keys:'edit editing retouch color correction remote photoshop lightroom' },
+];
+const CAT = Object.fromEntries(CATS.map(c => [c.id, c]));
+
+const PKG = {
+  headshots:[{n:'Express headshot',d:'30 min · 1 look · 5 retouched photos',p:95,dur:.5},{n:'Personal brand',d:'60 min · 2 looks · 15 retouched photos',p:185,dur:1},{n:'Team day',d:'Up to 8 people on-site · 3 photos each',p:520,dur:3}],
+  realestate:[{n:'Studio or 1BR listing',d:'Up to 15 photos · HDR · 24h delivery',p:149,dur:1},{n:'2–3BR home',d:'Up to 30 photos · twilight exterior',p:249,dur:1.5},{n:'Full listing + floor plan',d:'40 photos · floor plan · 60s vertical video',p:399,dur:2.5}],
+  product:[{n:'Starter pack',d:'5 products · white background · 3 angles',p:120,dur:1},{n:'Shop refresh',d:'15 products · white + 5 lifestyle shots',p:295,dur:2.5},{n:'Hero campaign',d:'3 styled scenes · props sourced',p:450,dur:3}],
+  events:[{n:'2-hour coverage',d:'Candids + group shots · 80+ edited photos',p:160,dur:2},{n:'Half-day coverage',d:'4 hours · 200+ photos · sneak peeks in 24h',p:360,dur:4},{n:'Hourly',d:'Book by the hour · 40 photos per hour',p:85,dur:1,hourly:true}],
+  family:[{n:'Mini session',d:'30 min in a park · 10 edited photos',p:130,dur:.5},{n:'Full session',d:'75 min · 2 locations · 30 edited photos',p:260,dur:1.25},{n:'Pet portrait',d:'45 min · treats included · 12 photos',p:145,dur:.75}],
+  food:[{n:'Menu refresh',d:'Up to 12 dishes · overhead + 45°',p:175,dur:1.5},{n:'Delivery-app pack',d:'25 dishes sized for DoorDash & Uber Eats',p:340,dur:3},{n:'Hourly',d:'Book by the hour · styling help',p:110,dur:1,hourly:true}],
+  creator:[{n:'Content batch',d:'60 min · 3 outfits · 20 edited photos',p:110,dur:1},{n:'Thumbnail pack',d:'10 YouTube-ready expressions, cut out',p:150,dur:1},{n:'Monthly batch',d:'2 hours · 60 photos · reels B-roll',p:320,dur:2}],
+  edits:[{n:'Quick fix',d:'Up to 10 photos · color + exposure',p:35,dur:0,remote:true},{n:'Retouch set',d:'10 portraits · skin, stray hairs, background',p:90,dur:0,remote:true},{n:'Listing HDR edit',d:'Up to 30 real-estate brackets merged',p:120,dur:0,remote:true}],
+};
+
+const PROS = [
+  { id:'maya', name:'Maya Okafor', hood:'Mission', cats:['headshots','creator'], rating:4.97, jobs:312, resp:'8 min', since:2019, elite:true, rush:true, mult:1, color:['#0E6B63','#48A89C'],
+    pitch:'Relaxed headshots with a real-person feel. I coach expressions so you never have to “just be natural.”',
+    about:'I spent six years shooting portraits for startups along Valencia Street before going independent. Most clients tell me they hate being photographed; my job is to make the 30 minutes feel like coffee with a friend. I bring a portable backdrop and two lights, so your living room or office works fine.',
+    gear:['Sony A7 IV','85mm f/1.8','Profoto B10 ×2','Grey/white backdrop'] },
+  { id:'daniel', name:'Daniel Reyes', hood:'Noe Valley', cats:['family','events'], rating:4.92, jobs:188, resp:'22 min', since:2020, rush:false, mult:1.05, color:['#7A4B2A','#C98A56'],
+    pitch:'Dad of two, fluent in toddler. I shoot family sessions at Dolores Park golden hour or your place.',
+    about:'I got into photography documenting my own kids and never stopped. I keep sessions playful and short, bring bubbles, and work fast when someone starts to melt down. Dogs welcome, and yes, I have treats.',
+    gear:['Canon R6','35mm f/1.4','70–200mm f/2.8'] },
+  { id:'priya', name:'Priya Raman', hood:'SoMa', cats:['product','creator'], rating:4.98, jobs:421, resp:'5 min', since:2018, elite:true, rush:true, mult:1.1, color:['#5B3D8A','#9C7ED0'],
+    pitch:'Clean, consistent product shots that pass Amazon & Shopify specs on the first try.',
+    about:'I run a small studio off Folsom with a sweep, tabletop rigs, and a prop wall. Drop your products at the studio or I’ll come to you. Every order ships with web-ready crops for Shopify, Etsy and Amazon, plus source files.',
+    gear:['Fujifilm GFX 50S II','120mm Macro','Godox AD600 ×3','Seamless sweep'] },
+  { id:'jonah', name:'Jonah Weiss', hood:'Hayes Valley', cats:['realestate'], rating:4.89, jobs:256, resp:'15 min', since:2017, rush:true, mult:1, color:['#2F4B6E','#6F93BE'],
+    pitch:'Listing photos that make small SF apartments look bright, straight and honest.',
+    about:'Former architect. I shoot vertical lines straight, windows blended so you can see the view, and I’ll quietly move your dish rack out of frame. 24-hour turnaround is standard, and twilight shots are available on request.',
+    gear:['Nikon Z7 II','14–24mm f/2.8','Tilt-shift 19mm','DJI Mini 4 (licensed)'] },
+  { id:'lucia', name:'Lucía Morales', hood:'Outer Sunset', cats:['events','family'], rating:4.95, jobs:203, resp:'12 min', since:2019, rush:false, mult:.95, color:['#A6462E','#E08A5C'],
+    pitch:'Birthdays, quinceañeras, launch parties — candid, colorful and never stiff.',
+    about:'I love a crowded room. I move quietly, catch the in-between moments and still get everyone in the group shot before grandma leaves. Bilingual in English and Spanish.',
+    gear:['Sony A7 III','24–70mm f/2.8','On-camera bounce flash'] },
+  { id:'kenji', name:'Kenji Tanaka', hood:'Japantown', cats:['food'], rating:4.96, jobs:167, resp:'30 min', since:2016, elite:true, rush:false, mult:1.05, color:['#3C3A36','#8A857A'],
+    pitch:'Food that looks like it tastes. I shoot during prep so nothing sits and wilts.',
+    about:'Twelve years in restaurant kitchens before photography, so I work around your service. I bring surfaces, linens and a small styling kit. Delivery-app packs come sized and color-matched for each platform.',
+    gear:['Canon R5','100mm Macro','50mm f/1.2','Overhead rig'] },
+  { id:'aisha', name:'Aisha Bello', hood:'Bernal Heights', cats:['headshots','events'], rating:4.93, jobs:144, resp:'10 min', since:2021, rush:true, mult:.9, color:['#9A2F57','#D8769B'],
+    pitch:'Warm, confident headshots for founders, realtors and new job-hunters.',
+    about:'I shoot in natural light whenever I can and carry a reflector for the rest. I’ll send you a prep sheet the night before covering what to wear and how to not over-think it.',
+    gear:['Nikon Z6 II','85mm f/1.8','5-in-1 reflector'] },
+  { id:'sam', name:'Sam Whitaker', hood:'Dogpatch', cats:['product','creator'], rating:4.86, jobs:98, resp:'18 min', since:2022, rush:true, mult:.85, color:['#4A5D23','#95A95A'],
+    pitch:'Lifestyle product shots for small brands — ceramics, candles, skincare.',
+    about:'I share a studio with three ceramicists at Minnesota Street, so styled lifestyle sets are my thing. I’m fast with same-week turnaround and happy to shoot on your kitchen counter if that fits the brand.',
+    gear:['Sony A7C II','50mm f/1.4','Aputure 300d','Prop library'] },
+  { id:'elena', name:'Elena Petrova', hood:'Russian Hill', cats:['realestate','edits'], rating:4.94, jobs:231, resp:'9 min', since:2018, rush:true, mult:1.05, color:['#35536B','#7FA6C2'],
+    pitch:'Airbnb and short-term rental shoots, plus remote HDR editing for agents.',
+    about:'I shoot for about forty Airbnb hosts across the city and know what the algorithm likes: wide, bright, and a hero shot of the bed. I also edit brackets for agents who shoot their own listings.',
+    gear:['Canon R6 II','RF 14–35mm f/4','Lightroom + Photoshop'] },
+  { id:'marcus', name:'Marcus Lee', hood:'Inner Richmond', cats:['events','food'], rating:4.88, jobs:176, resp:'25 min', since:2019, rush:false, mult:.95, color:['#8A5A12','#D2A04C'],
+    pitch:'Restaurant openings, pop-ups and supper clubs — the food and the crowd.',
+    about:'Half my calendar is Clement Street restaurants, the other half is the parties they throw. I deliver sneak peeks the same night for your socials.',
+    gear:['Fujifilm X-T5','23mm f/1.4','56mm f/1.2'] },
+  { id:'grace', name:'Grace Kim', hood:'Potrero Hill', cats:['family','edits'], rating:4.99, jobs:289, resp:'6 min', since:2017, elite:true, rush:true, mult:1.1, color:['#8C3B2E','#D47B63'],
+    pitch:'Pet portraits with real personality. Patient with shy rescues and zoomie puppies.',
+    about:'Former vet tech turned photographer. I work at dog level, use silent shutter and let pets warm up at their own pace. Sessions at McLaren Park, Fort Funston or your living room.',
+    gear:['Sony A1','70–200mm f/2.8 GM','Squeaker collection'] },
+  { id:'theo', name:'Theo Nakamura', hood:'Castro', cats:['creator','headshots','edits'], rating:4.9, jobs:122, resp:'14 min', since:2020, rush:true, mult:.9, color:['#3D3F8F','#7C80D6'],
+    pitch:'Instagram & YouTube batches — I help plan the shot list so you post for a month.',
+    about:'I run content days for creators and small brands. We map out the shot list together, shoot three to five looks, and I hand back files cropped for every platform. Remote retouching available too.',
+    gear:['Canon R8','RF 28–70mm f/2','Ring light','Zhiyun gimbal'] },
+];
+const PRO = Object.fromEntries(PROS.map(p => [p.id, p]));
+
+const REVIEWS = [
+  { cat:'headshots', who:'Jordan P.', stars:5, text:'I got three recruiter messages the week I swapped my LinkedIn photo. The whole shoot took 25 minutes in my apartment.' },
+  { cat:'headshots', who:'Nadia F.', stars:5, text:'Coached me through every awkward smile. I actually like how I look, which has never happened before.' },
+  { cat:'headshots', who:'Chris L.', stars:4, text:'Great photos. The retouching took an extra day but they messaged me ahead of time.' },
+  { cat:'realestate', who:'Tom & Ana', stars:5, text:'Our 1BR in Hayes looks twice the size, and it’s still honest. Booked solid within a week of relisting.' },
+  { cat:'realestate', who:'Rebecca M.', stars:5, text:'Photos arrived the next morning, straight lines and a bright living room. Exactly what our listing needed.' },
+  { cat:'realestate', who:'Kev B.', stars:5, text:'Super host tip: book the twilight add-on. Our click-through jumped noticeably.' },
+  { cat:'product', who:'Lina · Fern & Fig Candles', stars:5, text:'Twelve candle SKUs shot, clipped, and Etsy-sized in two days. My shop finally looks like a brand.' },
+  { cat:'product', who:'Omar T.', stars:5, text:'Amazon approved every image first try. Worth it just for not fighting with the white background.' },
+  { cat:'product', who:'Hana · Kiln Studio', stars:4, text:'Beautiful lifestyle shots. Would love a couple more angles next time.' },
+  { cat:'events', who:'Diego R.', stars:5, text:'Covered my daughter’s 7th birthday party and got every grandparent in a photo. Magic.' },
+  { cat:'events', who:'Priyanka S.', stars:5, text:'Launch party photos were in our Slack by 11pm. The team was thrilled.' },
+  { cat:'events', who:'Meg W.', stars:4, text:'Great candids. Would have liked a few more wide shots of the space.' },
+  { cat:'family', who:'The Nguyens', stars:5, text:'Our 2-year-old refused to sit still and we still have a framed print on the wall.' },
+  { cat:'family', who:'Alex G.', stars:5, text:'Our rescue greyhound is terrified of strangers, and she was wagging within ten minutes. Incredible patience.' },
+  { cat:'family', who:'Sophie K.', stars:5, text:'Fort Funston at golden hour with two very sandy dogs. Best money I’ve spent this year.' },
+  { cat:'food', who:'Rosa · Taqueria Rosa', stars:5, text:'Our DoorDash orders went up the week the new photos went live. Everything looks the way it tastes.' },
+  { cat:'food', who:'Ben C.', stars:5, text:'Shot around our lunch rush without getting in anyone’s way. Pro move.' },
+  { cat:'creator', who:'@sunsetsara', stars:5, text:'A month of content in one afternoon. The shot-list planning call alone was worth it.' },
+  { cat:'creator', who:'Marco D.', stars:4, text:'Thumbnails are punchy and consistent. Channel looks way more professional.' },
+  { cat:'edits', who:'Janelle R., Compass', stars:5, text:'I send brackets at night and get finished HDRs by morning. Saves me hours every week.' },
+];
+const WHENS = ['2 days ago','last week','1 week ago','2 weeks ago','3 weeks ago','last month','Aug 2026','Jul 2026'];
+PROS.forEach((p, pi) => {
+  const r = rng('rev' + p.id);
+  const pool = REVIEWS.filter(x => p.cats.includes(x.cat));
+  p.reviews = pool.slice().sort(() => r() - .5).slice(0, 4).map((x, i) => ({ ...x, when: WHENS[(i * 2 + Math.floor(r()*2)) % WHENS.length] }));
+  p.packages = PKG[p.cats[0]].map(k => ({ ...k, p: Math.round(k.p * p.mult / 5) * 5, cat: p.cats[0] }));
+  if (p.cats.includes('edits') && p.cats[0] !== 'edits') p.packages.push({ ...PKG.edits[1], p: Math.round(PKG.edits[1].p * p.mult / 5) * 5, cat:'edits' });
+  p.from = Math.min(...p.packages.map(k => k.p));
+  p.initials = p.name.split(' ').map(s => s[0]).join('');
+  const seen = {};
+  p.portfolio = Array.from({ length: 8 }, (_, i) => { const c = p.cats[i % p.cats.length]; const k = seen[c] = (seen[c] ?? -1) + 1; return { kind: CAT[c].kind, seed: pi * 3 + k, cat: c }; });
+});
+
+/* availability */
+const SLOTS = ['8:00 AM','9:30 AM','11:00 AM','1:00 PM','2:30 PM','4:00 PM','5:30 PM'];
+const TODAY = new Date(); TODAY.setHours(0,0,0,0);
+const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
+const DAYS = Array.from({ length: 14 }, (_, i) => addDays(TODAY, i));
+const fmtDay = d => d.toLocaleDateString('en-US', { weekday:'short' });
+const fmtDate = d => d.toLocaleDateString('en-US', { weekday:'short', month:'short', day:'numeric' });
+const fmtLong = d => d.toLocaleDateString('en-US', { weekday:'long', month:'long', day:'numeric' });
+function avail(pro, i){
+  const r = rng('av' + pro.id + i);
+  const dayOff = r() < .22 || (i === 0 && r() < .5);
+  const taken = SLOTS.map(() => r() < .38);
+  if (i === 0){ const h = new Date().getHours(); SLOTS.forEach((s, k) => { if (k < Math.max(0, h - 7)) taken[k] = true; }); }
+  const open = !dayOff && taken.some(t => !t);
+  return { open, taken };
+}
+function nextSlot(pro, fromIdx = 0, toIdx = 13){
+  for (let i = fromIdx; i <= toIdx; i++){ const a = avail(pro, i); if (a.open){ const k = a.taken.findIndex(t => !t); return { i, k, label: (i === 0 ? 'Today' : i === 1 ? 'Tomorrow' : fmtDay(DAYS[i])) + ' ' + SLOTS[k] }; } }
+  return null;
+}
+
+/* ============ state ============ */
+const S = {
+  q: '', hood: 'Mission', when: 'any',
+  f: { cats: [], max: 600, minRating: 0, rush: false, elite: false, sort: 'rec' },
+  filtersOpen: false, loading: false,
+  booking: null, bkTab: 'upcoming', cancelId: null, reviewId: null, reviewDraft: { stars: 5, text: '' },
+  lb: null,
+  bookings: store.get('fh.bookings', null),
+  chats: store.get('fh.chats', {}),
+};
+if (!Array.isArray(S.bookings)){
+  const past = addDays(TODAY, -19);
+  S.bookings = [{ id:'FH-40218', pro:'grace', pkg:2, pkgName:'Pet portrait', price:145, date: past.toISOString(), time:'4:00 PM', addr:'McLaren Park, near the reservoir', notes:'Waffles, 4yo corgi. Loves tennis balls, hates the leash.', addons:[], fee:10.88, total:155.88, status:'completed', created: addDays(past,-6).toISOString(), delivered: 14 }];
+}
+const save = () => { store.set('fh.bookings', S.bookings); store.set('fh.chats', S.chats); updateCount(); };
+function updateCount(){
+  const n = S.bookings.filter(b => b.status !== 'cancelled' && b.status !== 'completed' && new Date(b.date) >= TODAY).length;
+  const el = $('#bk-count'); el.textContent = n; el.hidden = !n;
+}
+
+/* ============ router ============ */
+const app = $('#app');
+let ROUTE = (location.hash || '').slice(1) || 'home';
+function go(route){
+  const same = route === ROUTE; ROUTE = route;
+  if (!same){ try { history.pushState(null, '', '#' + route); } catch {} }
+  render(); if (!same) window.scrollTo(0, 0);
+}
+window.addEventListener('popstate', () => { ROUTE = (location.hash || '').slice(1) || 'home'; render(); });
+function parse(){
+  const h = ROUTE;
+  const m = h.match(/^(pro|book|done)-(.+)$/);
+  return m ? { name: m[1], id: m[2] } : { name: h };
+}
+function render(){
+  const r = parse();
+  let html;
+  if (r.name === 'browse') html = vBrowse();
+  else if (r.name === 'pro' && PRO[r.id]) html = vPro(PRO[r.id]);
+  else if (r.name === 'book' && PRO[r.id]) html = vBook(PRO[r.id]);
+  else if (r.name === 'done' && S.bookings.find(b => b.id === r.id)) html = vDone(S.bookings.find(b => b.id === r.id));
+  else if (r.name === 'bookings') html = vBookings();
+  else html = vHome();
+  app.innerHTML = html;
+  app.firstElementChild?.classList.add('fade');
+  $('#nav-browse').classList.toggle('on', r.name === 'browse' || r.name === 'pro');
+  $('#nav-bookings').classList.toggle('on', r.name === 'bookings');
+  if (r.name === 'done') scrollChat();
+}
+
+/* ============ views ============ */
+const avatar = (p, cls = '') => `<span class="av ${cls}" style="background:linear-gradient(135deg,${p.color[0]},${p.color[1]})" aria-hidden="true">${p.initials}</span>`;
+const initialsAv = (name, seed) => { const r = rng(seed); const h = Math.floor(r()*360); return `<span class="av" style="background:hsl(${h} 32% 42%)" aria-hidden="true">${esc(name.replace(/[^A-Za-z ]/g,'').split(' ').filter(Boolean).map(s=>s[0]).slice(0,2).join(''))}</span>`; };
+const rating = p => `<span class="rating">${I.star}${p.rating.toFixed(2)} <small>(${p.jobs} jobs)</small></span>`;
+
+function vHome(){
+  const frames = [
+    ['portrait',1,'Headshot'],['room',0,'Listing'],['product',2,'Product'],
+    ['pet',2,'Pet portrait'],['food',0,'Menu'],['event',0,'Birthday'],
+    ['creator',1,'Creator'],['portrait',5,'Headshot'],['room',3,'Airbnb'],
+  ];
+  const hoodOpts = Object.keys(HOODS).map(h => `<option ${h === S.hood ? 'selected' : ''}>${h}</option>`).join('');
+  const popular = [
+    { t:'LinkedIn headshot', cat:'headshots', spec:['30 min','5 retouched','At your place'], price:95, eta:'Tomorrow' },
+    { t:'Airbnb listing refresh', cat:'realestate', spec:['Up to 15 photos','HDR','24h delivery'], price:149, eta:'Thu' },
+    { t:'Etsy product photos', cat:'product', spec:['5 products','White background','3 angles'], price:102, eta:'Today' },
+    { t:'Kid’s birthday party', cat:'events', spec:['2 hours','80+ photos','Sneak peeks'], price:150, eta:'Sat' },
+    { t:'Dog portrait in the park', cat:'family', spec:['45 min','12 photos','Treats included'], price:145, eta:'Sun' },
+    { t:'Menu & delivery-app photos', cat:'food', spec:['12 dishes','Overhead + 45°','Styled'], price:175, eta:'Mon' },
+  ];
+  return `<div>
+  <section class="hero wrap">
+    <div class="hero-grid">
+      <div>
+        <span class="eyebrow live"><i></i>San Francisco · 38 photographers free this week</span>
+        <h1>Book a local photographer for the <em>small stuff</em>.</h1>
+        <p class="lede">Headshots, listing photos, product shots, a birthday party. Pick a vetted pro nearby, see the price up front, and get edited photos in 48 hours.</p>
+        <form class="search" id="search" role="search">
+          <label for="q"><span>What do you need shot?</span><input id="q" placeholder="e.g. headshot, Airbnb, candles" value="${esc(S.q)}" autocomplete="off"></label>
+          <label for="hood"><span>Where</span><select id="hood">${hoodOpts}</select></label>
+          <label for="when"><span>When</span><select id="when">
+            <option value="any" ${S.when==='any'?'selected':''}>Any time</option>
+            <option value="today" ${S.when==='today'?'selected':''}>Today</option>
+            <option value="week" ${S.when==='week'?'selected':''}>This week</option>
+            <option value="weekend" ${S.when==='weekend'?'selected':''}>This weekend</option>
+          </select></label>
+          <button class="btn btn-primary" type="submit">Find photographers ${I.arrow}</button>
+        </form>
+        <div class="quick"><span class="muted">Popular:</span>
+          ${['Headshot','Airbnb listing','Product','Dog portrait','Birthday party'].map(t => `<button class="chip" data-action="quick" data-q="${t}">${t}</button>`).join('')}
+        </div>
+      </div>
+      <div style="position:relative">
+        <div class="sheet" aria-label="Contact sheet of recent Framehand jobs">
+          <div class="sheet-head"><span>Framehand · SF</span><span>Kodak Portra 400</span><span>Week 39</span></div>
+          <div class="sheet-grid">
+            ${frames.map((f, i) => `<figure class="frame" style="margin:0">
+              <div class="ph">${img(f[0], f[1], f[2] + ' sample photo', 320, 400)}</div>
+              <figcaption><span>${String(i + 12).padStart(2,'0')}A</span><b>${f[2]}</b></figcaption>
+              ${i === 4 ? `<svg class="pencil" viewBox="0 0 100 120" preserveAspectRatio="none" aria-hidden="true"><path d="M52,4 C88,2 99,30 97,62 C95,98 76,117 46,116 C14,114 2,90 3,58 C4,24 20,6 56,6 C62,6 66,8 68,10"/></svg>` : ''}
+            </figure>`).join('')}
+          </div>
+        </div>
+        <div class="pick-note">${avatar(PRO.kenji)}<div><strong>Kenji picked frame 16A</strong><span class="mono">Taqueria Rosa · menu shoot</span></div></div>
+      </div>
+    </div>
+    <div class="trust">
+      <div>${I.shield}Every photographer ID-checked and portfolio-reviewed</div>
+      <div>${I.clock}Edited photos in 48 hours or your fee back</div>
+      <div>${I.check}Fixed prices. No quotes, no haggling.</div>
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="cats-h">
+    <div class="sec-head"><div><h2 id="cats-h">What do you need shot?</h2><p>Eight kinds of job, each priced for the work it takes.</p></div><button class="btn btn-ghost" data-go="browse">Browse all photographers ${I.arrow}</button></div>
+    <div class="cats">
+      ${CATS.map(c => `<button class="cat" data-action="cat" data-cat="${c.id}">
+        <div class="ph">${img(c.kind, 'cat' + c.id, c.name, 400, 300)}</div>
+        <h3>${c.name}</h3><p>${c.blurb} · from ${money(c.from)}</p>
+      </button>`).join('')}
+    </div>
+  </section>
+
+  <section class="section wrap" aria-labelledby="pop-h" style="padding-top:0">
+    <div class="sec-head"><div><h2 id="pop-h">Booked most this week</h2><p>Typical prices from photographers near ${esc(S.hood)}.</p></div></div>
+    <div class="tasks">
+      ${popular.map(t => `<button class="task" data-action="cat" data-cat="${t.cat}">
+        <span class="tag">${CAT[t.cat].name}</span>
+        <h3>${t.t}</h3>
+        <div class="spec">${t.spec.map(s => `<span>${s}</span>`).join('')}</div>
+        <div class="foot"><span class="price">${money(t.price)} <small>typical</small></span><span class="next">${I.clock}Open ${t.eta}</span></div>
+      </button>`).join('')}
+    </div>
+  </section>
+
+  <section class="section wrap" id="how" aria-labelledby="how-h">
+    <div class="sec-head"><div><h2 id="how-h">How Framehand works</h2><p>From “I need a photo” to a finished gallery in about three days.</p></div></div>
+    <ol class="how">
+      <li><h3>Describe the job</h3><p>Tell us what needs shooting and where. We match you with photographers who do that kind of work nearby.</p></li>
+      <li><h3>Pick a pro and a time</h3><p>Compare portfolios, reviews and fixed prices. Book an open slot, and your photographer confirms within the hour.</p></li>
+      <li><h3>Get your gallery</h3><p>Edited, web-ready photos land in a private gallery within 48 hours. You pay only after the shoot.</p></li>
+    </ol>
+  </section>
+
+  <section class="section wrap" aria-labelledby="q-h" style="padding-top:0">
+    <div class="sec-head"><div><h2 id="q-h">What people booked it for</h2></div></div>
+    <div class="quotes">
+      ${[[REVIEWS[0],'maya'],[REVIEWS[13],'grace'],[REVIEWS[15],'kenji']].map(([rv,pid]) => `<figure class="quote" style="margin:0">
+        <blockquote>“${rv.text}”</blockquote>
+        <footer>${initialsAv(rv.who, rv.who)}<div><strong>${rv.who}</strong><div class="muted" style="font-size:.84rem">booked ${PRO[pid].name}</div></div></footer>
+      </figure>`).join('')}
+    </div>
+  </section>
+
+  <section class="section wrap">
+    <div class="pro-cta">
+      <div><h2>Shoot for Framehand</h2><p>Fill the gaps in your calendar with paid local jobs. You set your packages and your hours. We handle booking, payment and reminders.</p><button class="btn btn-primary" data-action="become">Apply as a photographer</button></div>
+      <div class="stats">
+        <div><b class="tnum">$1,840</b><span>average monthly earnings for part-time pros</span></div>
+        <div><b class="tnum">85%</b><span>of the booking fee goes to you</span></div>
+        <div><b class="tnum">2 days</b><span>from shoot to payout</span></div>
+        <div><b class="tnum">412</b><span>photographers in the Bay Area</span></div>
+      </div>
+    </div>
+  </section>
+  ${footer()}
+  </div>`;
+}
+const footer = () => `<footer class="site"><div class="wrap"><span>© 2026 Framehand · Prototype. Photographers, reviews and prices are placeholder content. Sample photos courtesy of Unsplash photographers.</span><span>San Francisco · Oakland · Berkeley</span></div></footer>`;
+
+function filtered(){
+  const q = S.q.trim().toLowerCase();
+  let qCats = [];
+  if (q) qCats = CATS.filter(c => (c.name + ' ' + c.keys).toLowerCase().split(/\s+/).some(k => k.startsWith(q.split(' ')[0]) || q.includes(k))).map(c => c.id);
+  const cats = S.f.cats.length ? S.f.cats : qCats;
+  const whenRange = { any:[0,13], today:[0,0], week:[0,6], weekend:(() => { const i = DAYS.findIndex(d => d.getDay() === 6); return [Math.max(0, i === -1 ? 0 : i), Math.min(13, (i === -1 ? 0 : i) + 1)]; })() }[S.when];
+  let list = PROS.map(p => ({ p, d: dist(p.hood, S.hood), next: nextSlot(p, whenRange[0], whenRange[1]) }))
+    .filter(x => !cats.length || x.p.cats.some(c => cats.includes(c)))
+    .filter(x => x.p.from <= S.f.max)
+    .filter(x => x.p.rating >= S.f.minRating)
+    .filter(x => !S.f.rush || x.p.rush)
+    .filter(x => !S.f.elite || x.p.elite)
+    .filter(x => x.next || (x.p.cats.length === 1 && x.p.cats[0] === 'edits'));
+  const cmp = { rec:(a,b) => (b.p.rating*20 + Math.log(b.p.jobs)*2 - b.d) - (a.p.rating*20 + Math.log(a.p.jobs)*2 - a.d), price:(a,b) => a.p.from - b.p.from, rating:(a,b) => b.p.rating - a.p.rating, dist:(a,b) => a.d - b.d };
+  return { list: list.sort(cmp[S.f.sort]), cats };
+}
+function vBrowse(){
+  const { list, cats } = filtered();
+  const title = cats.length === 1 ? CAT[cats[0]].name + ' photographers' : 'Photographers';
+  const whenLbl = { any:'', today:' free today', week:' free this week', weekend:' free this weekend' }[S.when];
+  const hoodOpts = Object.keys(HOODS).map(h => `<option ${h === S.hood ? 'selected' : ''}>${h}</option>`).join('');
+  return `<div class="wrap"><div class="browse">
+    <aside class="filters ${S.filtersOpen ? 'open' : ''}" id="filters" aria-label="Filters">
+      <div class="fgroup"><h4>Job type</h4><div class="fchips">${CATS.map(c => `<button class="chip ${cats.includes(c.id) ? 'on' : ''}" data-action="fcat" data-cat="${c.id}" aria-pressed="${cats.includes(c.id)}">${c.name}</button>`).join('')}</div></div>
+      <div class="fgroup"><h4><label for="f-hood">Near</label></h4><select class="select" id="f-hood">${hoodOpts}</select></div>
+      <div class="fgroup"><h4><label for="f-when">When</label></h4><select class="select" id="f-when">
+        <option value="any" ${S.when==='any'?'selected':''}>Any time in the next 2 weeks</option><option value="today" ${S.when==='today'?'selected':''}>Today</option><option value="week" ${S.when==='week'?'selected':''}>This week</option><option value="weekend" ${S.when==='weekend'?'selected':''}>This weekend</option></select></div>
+      <div class="fgroup"><h4><label for="f-max">Starting price up to</label></h4><input type="range" id="f-max" min="50" max="600" step="10" value="${S.f.max}"><div class="range-val"><span>$50</span><span id="f-max-v" class="tnum">${S.f.max >= 600 ? 'Any' : money(S.f.max)}</span></div></div>
+      <div class="fgroup"><h4><label for="f-rating">Rating</label></h4><select class="select" id="f-rating"><option value="0">Any rating</option><option value="4.9" ${S.f.minRating==4.9?'selected':''}>4.9 and up</option><option value="4.95" ${S.f.minRating==4.95?'selected':''}>4.95 and up</option></select></div>
+      <div class="fgroup" style="display:grid;gap:12px">
+        <label class="check"><input type="checkbox" id="f-rush" ${S.f.rush ? 'checked' : ''}><span>Offers 24-hour delivery</span></label>
+        <label class="check"><input type="checkbox" id="f-elite" ${S.f.elite ? 'checked' : ''}><span>Elite pros only <span class="muted">(top 5%, 150+ jobs)</span></span></label>
+      </div>
+      <button class="btn-text" data-action="reset" style="justify-self:start;align-self:flex-start">Clear all filters</button>
+    </aside>
+    <section aria-live="polite">
+      <div class="results-head">
+        <div><h1>${title}</h1><p class="muted">${list.length} near ${esc(S.hood)}${whenLbl}${S.q ? ` · matching “${esc(S.q)}”` : ''}</p></div>
+        <div style="display:flex;gap:8px;align-items:center">
+          <button class="btn btn-ghost btn-sm filter-toggle" data-action="toggle-filters" aria-expanded="${S.filtersOpen}" aria-controls="filters">${I.filter}Filters</button>
+          <label class="muted" for="f-sort" style="font-size:.88rem">Sort</label>
+          <select class="select" id="f-sort"><option value="rec" ${S.f.sort==='rec'?'selected':''}>Recommended</option><option value="price" ${S.f.sort==='price'?'selected':''}>Lowest price</option><option value="rating" ${S.f.sort==='rating'?'selected':''}>Highest rated</option><option value="dist" ${S.f.sort==='dist'?'selected':''}>Closest</option></select>
+        </div>
+      </div>
+      <div class="list" id="results">
+        ${S.loading ? '<div class="skel"></div><div class="skel"></div><div class="skel"></div>' :
+          list.length ? list.map(x => proCard(x)).join('') :
+          `<div class="empty"><h3>No photographers match all of that</h3><p>Try a wider time window or a higher price limit. ${S.when !== 'any' ? 'Most pros have openings later in the week.' : ''}</p><button class="btn btn-primary" data-action="reset">Clear filters</button></div>`}
+      </div>
+    </section>
+  </div></div>`;
+}
+function proCard({ p, d, next }){
+  return `<article class="pro-card">
+    <div>
+      <div class="pc-top">${avatar(p)}
+        <div><h3><button data-go="pro-${p.id}">${p.name}</button>${p.elite ? '<span class="tag film">Elite</span>' : ''}</h3>
+          <div class="pc-meta">${rating(p)}<span>${I.pin}${p.hood} · ${d.toFixed(1)} mi</span><span>${I.clock}Replies in ~${p.resp}</span></div></div>
+      </div>
+      <div class="strip">${p.portfolio.slice(0,4).map((ph, i) => `<button class="ph" data-action="lb" data-pro="${p.id}" data-i="${i}" aria-label="View ${CAT[ph.cat].name} photo by ${p.name}">${img(ph.kind, ph.seed, '', 300, 300)}</button>`).join('')}</div>
+      <p class="pitch"><b>How I can help:</b> ${p.pitch}</p>
+    </div>
+    <div class="pc-side">
+      <div><span class="muted" style="font-size:.85rem">From</span><div class="price tnum">${money(p.from)}</div></div>
+      ${next ? `<span class="next">${I.cal}${next.label}</span>` : `<span class="next">${I.bolt}Remote · starts today</span>`}
+      <div class="spacer"></div>
+      <button class="btn btn-ghost btn-sm" data-go="pro-${p.id}">View profile</button>
+      <button class="btn btn-primary btn-sm" data-action="book" data-pro="${p.id}">Select & continue</button>
+    </div>
+  </article>`;
+}
+
+function vPro(p){
+  const d = dist(p.hood, S.hood);
+  const nx = []; for (let i = 0; i < 14 && nx.length < 5; i++){ const a = avail(p, i); if (!a.open) continue; a.taken.forEach((t, k) => { if (!t && nx.length < 5 && (nx.length === 0 || nx[nx.length-1].i !== i || k % 2)) nx.push({ i, k }); }); }
+  return `<div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><button data-go="browse">Photographers</button><span aria-hidden="true">/</span><span>${p.name}</span></nav>
+    <div class="profile">
+      <div>
+        <div class="p-head">${avatar(p)}<div>
+          <h1>${p.name}</h1>
+          <div class="pc-meta" style="margin-top:6px">${rating(p)}<span>${I.pin}${p.hood} · ${d.toFixed(1)} mi from ${esc(S.hood)}</span>${p.elite ? '<span class="tag film">Elite</span>' : ''}${p.rush ? '<span class="tag">24h delivery</span>' : ''}</div>
+        </div></div>
+        <div class="gallery">${p.portfolio.map((ph, i) => `<button class="ph" data-action="lb" data-pro="${p.id}" data-i="${i}" aria-label="Open photo ${i + 1} of 8">${img(ph.kind, ph.seed, CAT[ph.cat].name + ' photo', i === 0 ? 600 : 400, i === 0 ? 600 : 400)}<span class="exif">Photo: ${esc(credit(ph.kind, ph.seed))}</span></button>`).join('')}</div>
+
+        <div class="block"><h2>Packages</h2><div class="pkgs">
+          ${p.packages.map((k, i) => `<div class="pkg"><div><h3>${k.n}</h3><ul>${k.d.split(' · ').map(s => `<li>${I.check}${s}</li>`).join('')}</ul></div>
+            <div class="right"><span class="price tnum">${money(k.p)}${k.hourly ? '<small> /hr</small>' : ''}</span><button class="btn btn-primary btn-sm" data-action="book" data-pro="${p.id}" data-pkg="${i}">Book this</button></div></div>`).join('')}
+        </div></div>
+
+        <div class="block"><h2>About ${p.name.split(' ')[0]}</h2><p class="about">${p.about}</p>
+          <div class="facts"><div><b class="tnum">${p.jobs}</b><span>jobs on Framehand</span></div><div><b>${p.resp}</b><span>typical reply</span></div><div><b class="tnum">${p.since}</b><span>shooting since</span></div></div>
+          <div class="gear">${p.gear.map(g => `<span>${g}</span>`).join('')}</div>
+        </div>
+
+        <div class="block"><h2>Reviews <span class="muted" style="font-weight:500;font-size:1rem">· ${p.rating.toFixed(2)} from ${Math.round(p.jobs * .71)} reviews</span></h2>
+          <div class="reviews">${p.reviews.map(rv => `<article class="review"><header>${initialsAv(rv.who, rv.who)}<strong>${esc(rv.who)}</strong>${stars(rv.stars)}<span class="when">${esc(rv.when)}</span><span class="tag">${CAT[rv.cat].name}</span></header><p>${esc(rv.text)}</p></article>`).join('')}</div>
+        </div>
+      </div>
+      <aside class="side"><div class="card">
+        <span class="muted" style="font-size:.85rem">Packages from</span>
+        <div class="price tnum" style="font-size:2rem;margin-top:2px">${money(p.from)}</div>
+        <h3 style="margin-top:18px;font-size:1rem">Next open times</h3>
+        <div class="slots">${nx.map(s => `<button class="slot-mini" data-action="book" data-pro="${p.id}" data-day="${s.i}" data-slot="${s.k}">${s.i === 0 ? 'Today' : s.i === 1 ? 'Tomorrow' : fmtDate(DAYS[s.i])}, ${SLOTS[s.k]}</button>`).join('')}</div>
+        <button class="btn btn-primary" style="width:100%" data-action="book" data-pro="${p.id}">Book ${p.name.split(' ')[0]}</button>
+        <p class="guarantee">${I.shield}<span>You pay only after the shoot. Free cancellation up to 24 hours before.</span></p>
+      </div></aside>
+    </div>
+  </div>
+  <div class="mobile-bar" style="${''}"><div><span class="muted" style="font-size:.8rem">From</span><br><b>${money(p.from)}</b></div><button class="btn btn-primary" data-action="book" data-pro="${p.id}">Book ${p.name.split(' ')[0]}</button></div>`;
+}
+
+/* booking */
+const ADDONS = [
+  { id:'extra', n:'10 extra edited photos', d:'More picks from the same shoot', p:40 },
+  { id:'rush', n:'24-hour delivery', d:'Gallery by tomorrow night', p:35 },
+  { id:'light', n:'Portable lighting kit', d:'For dim apartments and offices', p:25 },
+  { id:'travel', n:'Travel beyond 5 miles', d:'Outside the photographer’s area', p:20 },
+];
+const FEE = .075;
+function bookingTotals(p, b){
+  const k = p.packages[b.pkg];
+  const base = k.hourly ? k.p * b.hours : k.p;
+  const add = b.addons.reduce((s, id) => s + ADDONS.find(a => a.id === id).p, 0);
+  const fee = Math.round((base + add) * FEE * 100) / 100;
+  return { k, base, add, fee, total: base + add + fee };
+}
+function startBooking(pid, opts = {}){
+  const p = PRO[pid];
+  S.booking = { pro: pid, step: opts.day != null ? 0 : 0, pkg: opts.pkg ?? 0, hours: 2, day: opts.day ?? null, slot: opts.slot ?? null, addr: '', notes: '', addons: [], agree: false, err: {}, editing: null };
+  if (opts.pkg != null) S.booking.step = 1;
+  if (!p) return;
+  go('book-' + pid);
+}
+function vBook(p){
+  const b = S.booking && S.booking.pro === p.id ? S.booking : (S.booking = { pro: p.id, step: 0, pkg: 0, hours: 2, day: null, slot: null, addr: '', notes: '', addons: [], agree: false, err: {}, editing: null });
+  const t = bookingTotals(p, b);
+  const steps = ['Package','Date & time','Job details','Review'];
+  const isRemote = t.k.remote;
+  let body = '';
+  if (b.step === 0){
+    body = `<div class="step"><h1>What should ${p.name.split(' ')[0]} shoot?</h1><p class="muted">Prices are fixed and include editing. You can add extras in step 3.</p>
+      <div class="opts" role="radiogroup" aria-label="Package">${p.packages.map((k, i) => `<div class="opt ${b.pkg === i ? 'on' : ''}" tabindex="0" role="radio" aria-checked="${b.pkg === i}" data-action="pkg" data-i="${i}"><span class="radio"></span>
+        <div><h3>${k.n}</h3><p>${k.d}</p>${k.hourly && b.pkg === i ? `<div class="hours" data-stop="1"><span class="hours-ctl"><button type="button" data-action="hrs" data-d="-1" aria-label="Fewer hours">−</button></span><b class="tnum">${b.hours} hours</b><span><button type="button" data-action="hrs" data-d="1" aria-label="More hours">+</button></span></div>` : ''}</div>
+        <span class="price tnum">${money(k.p)}${k.hourly ? '<small>/hr</small>' : ''}</span></div>`).join('')}</div></div>`;
+  } else if (b.step === 1){
+    const a = b.day != null ? avail(p, b.day) : null;
+    body = `<div class="step"><h1>${isRemote ? 'When do you need it back?' : 'Pick a date and time'}</h1><p class="muted">${isRemote ? 'Choose the day you’ll send your files. The edit is delivered within 48 hours.' : `Showing ${p.name.split(' ')[0]}’s real openings for the next two weeks. Times are in Pacific Time.`}</p>
+      <div class="days" role="listbox" aria-label="Date">${DAYS.map((d, i) => { const av = avail(p, i); const free = av.taken.filter(x => !x).length; return `<button class="day ${b.day === i ? 'on' : ''}" data-action="day" data-i="${i}" ${av.open ? '' : 'disabled'} aria-selected="${b.day === i}"><span>${i === 0 ? 'Today' : fmtDay(d)}</span><b class="tnum">${d.getDate()}</b><small>${av.open ? free + ' open' : 'Full'}</small></button>`; }).join('')}</div>
+      ${a ? `<h3 style="margin-top:24px;font-size:1.05rem">${fmtLong(DAYS[b.day])}</h3><div class="times">${SLOTS.map((s, k) => `<button class="time ${b.slot === k ? 'on' : ''}" data-action="slot" data-k="${k}" ${a.taken[k] ? 'disabled aria-label="' + s + ', booked"' : ''}>${s}</button>`).join('')}</div>` : `<p class="muted" style="margin-top:20px">Choose a day to see available times.</p>`}
+      ${b.err.when ? `<p class="errmsg" style="margin-top:12px">${b.err.when}</p>` : ''}</div>`;
+  } else if (b.step === 2){
+    const sugg = { headshots:['Plain wall background','Outdoor option','Glasses on and off','Team of 4'], realestate:['Hero shot of the bed','Kitchen detail','Street view exterior','Lockbox code on arrival'], product:['White background','Lifestyle on marble','Scale shot in hand','Square crops for Etsy'], events:['Cake moment at 3pm','Group photo with grandparents','Candids > posed','Venue details'], family:['Golden hour','Dog is shy with strangers','Matching outfits','Include the grandparents'], food:['Overhead flat-lays','Steam on the ramen','Match brand colors','Shoot before 11am service'], creator:['3 outfits','Vertical for Reels','Thumbnail faces','Brand colors: sage + cream'], edits:['Warm, natural tones','Remove power lines','Brighten windows','Consistent white balance'] }[t.k.cat] || [];
+    body = `<div class="step"><h1>Tell ${p.name.split(' ')[0]} about the job</h1><p class="muted">The more detail you share, the fewer surprises on the day.</p>
+      ${isRemote ? '' : `<div class="field"><label for="b-addr">Where is the shoot?</label><input class="input ${b.err.addr ? 'err' : ''}" id="b-addr" value="${esc(b.addr)}" placeholder="Street address, park or venue" autocomplete="street-address">${b.err.addr ? `<span class="errmsg">${b.err.addr}</span>` : '<span class="hint">Your exact address is shared only after the photographer confirms.</span>'}</div>`}
+      <div class="field"><label for="b-notes">Shot list & notes</label><textarea class="textarea" id="b-notes" placeholder="What do you need, what will you use the photos for, anything to know about access or parking?">${esc(b.notes)}</textarea>
+        <div class="suggest">${sugg.map(s => `<button class="chip" data-action="sugg" data-s="${esc(s)}">+ ${s}</button>`).join('')}</div></div>
+      <div class="field"><label>Extras</label><div class="addons">${ADDONS.filter(a => !(isRemote && (a.id === 'light' || a.id === 'travel'))).map(a => `<label class="addon"><input type="checkbox" data-addon="${a.id}" ${b.addons.includes(a.id) ? 'checked' : ''}><div><b>${a.n} · +${money(a.p)}</b><span>${a.d}</span></div></label>`).join('')}</div></div></div>`;
+  } else {
+    body = `<div class="step"><h1>Review and ${b.editing ? 'reschedule' : 'request booking'}</h1><p class="muted">${p.name.split(' ')[0]} usually confirms within ${p.resp}. You won’t be charged until after the shoot.</p>
+      <dl class="rev-list">
+        <div class="rev-row"><dt>Photographer</dt><dd>${p.name} · ${p.hood}</dd><button class="btn-text" data-action="step" data-s="0">Change</button></div>
+        <div class="rev-row"><dt>Package</dt><dd>${t.k.n}${t.k.hourly ? ` · ${b.hours} hours` : ''}<br><span class="muted" style="font-weight:400">${t.k.d}</span></dd><button class="btn-text" data-action="step" data-s="0">Edit</button></div>
+        <div class="rev-row"><dt>When</dt><dd>${fmtLong(DAYS[b.day])} at ${SLOTS[b.slot]}</dd><button class="btn-text" data-action="step" data-s="1">Edit</button></div>
+        ${isRemote ? '' : `<div class="rev-row"><dt>Where</dt><dd>${esc(b.addr)}</dd><button class="btn-text" data-action="step" data-s="2">Edit</button></div>`}
+        <div class="rev-row"><dt>Notes</dt><dd>${b.notes ? esc(b.notes) : '<span class="muted">None added</span>'}</dd><button class="btn-text" data-action="step" data-s="2">Edit</button></div>
+        <div class="rev-row"><dt>Extras</dt><dd>${b.addons.length ? b.addons.map(id => ADDONS.find(a => a.id === id).n).join(', ') : '<span class="muted">None</span>'}</dd><button class="btn-text" data-action="step" data-s="2">Edit</button></div>
+      </dl>
+      <div class="demo-pay">${I.info}<span>Prototype: no payment is collected. In the real app, your saved card would be authorized now and charged after the shoot.</span></div>
+      <label class="check" style="margin-top:18px"><input type="checkbox" id="b-agree" ${b.agree ? 'checked' : ''}><span>I agree to the cancellation policy: free up to 24 hours before, 50% after that.</span></label>
+      ${b.err.agree ? `<p class="errmsg" style="margin-top:8px">${b.err.agree}</p>` : ''}</div>`;
+  }
+  const cta = b.step === 3 ? (b.editing ? 'Confirm new time' : `Request booking · ${money2(t.total)}`) : 'Continue';
+  return `<div class="wrap">
+    <nav class="crumbs" aria-label="Breadcrumb"><button data-go="browse">Photographers</button><span aria-hidden="true">/</span><button data-go="pro-${p.id}">${p.name}</button><span aria-hidden="true">/</span><span>${b.editing ? 'Reschedule' : 'Book'}</span></nav>
+    <div class="book">
+      <div>
+        <ol class="progress">${steps.map((s, i) => `<li class="${i < b.step ? 'done' : i === b.step ? 'cur' : ''}" ${i === b.step ? 'aria-current="step"' : ''}>${s}</li>`).join('')}</ol>
+        ${body}
+        <div class="wiz-nav">
+          ${b.step > 0 ? `<button class="btn btn-ghost" data-action="prev">${I.back}Back</button>` : `<button class="btn btn-ghost" data-go="pro-${p.id}">${I.back}Profile</button>`}
+          <button class="btn btn-primary" data-action="next">${cta}${b.step < 3 ? I.arrow : ''}</button>
+        </div>
+      </div>
+      <aside class="summary-col"><div class="card summary side">
+        <div class="who">${avatar(p)}<div><strong>${p.name}</strong>${rating(p)}</div></div>
+        <div class="lines">
+          <div><span>${t.k.n}${t.k.hourly ? ` × ${b.hours}h` : ''}</span><span>${money2(t.base)}</span></div>
+          ${b.addons.map(id => { const a = ADDONS.find(x => x.id === id); return `<div><span>${a.n}</span><span>${money2(a.p)}</span></div>`; }).join('')}
+          <div><span>Trust & support fee</span><span>${money2(t.fee)}</span></div>
+        </div>
+        <div class="lines">
+          <div><span>When</span><span>${b.day != null ? fmtDate(DAYS[b.day]) + (b.slot != null ? ', ' + SLOTS[b.slot] : '') : '—'}</span></div>
+          <div><span>Delivery</span><span>${b.addons.includes('rush') ? 'Within 24 hours' : 'Within 48 hours'}</span></div>
+        </div>
+        <div class="total"><span>Total</span><b>${money2(t.total)}</b></div>
+        <p class="guarantee">${I.shield}<span>Covered by the Framehand Promise: if the photos miss the brief, we reshoot or refund.</span></p>
+      </div></aside>
+    </div>
+  </div>
+  <div class="mobile-bar">
+    ${b.step > 0 ? `<button class="btn btn-ghost" data-action="prev" aria-label="Back">${I.back}</button>` : ''}
+    <div style="flex:1"><span class="muted" style="font-size:.8rem">Step ${b.step + 1} of 4 · Total</span><br><b class="tnum">${money2(t.total)}</b></div>
+    <button class="btn btn-primary" data-action="next">${b.step === 3 ? (b.editing ? 'Confirm' : 'Request booking') : 'Continue'}</button>
+  </div>`;
+}
+function validate(b, p){
+  b.err = {};
+  const k = p.packages[b.pkg];
+  if (b.step === 1 && (b.day == null || b.slot == null)) b.err.when = b.day == null ? 'Choose a day to continue.' : 'Choose a time on ' + fmtLong(DAYS[b.day]) + '.';
+  if (b.step === 2 && !k.remote && b.addr.trim().length < 4) b.err.addr = 'Add an address, park or venue so the photographer can plan travel.';
+  if (b.step === 3 && !b.agree) b.err.agree = 'Tick the box to accept the cancellation policy.';
+  return !Object.keys(b.err).length;
+}
+function submitBooking(p, b){
+  const t = bookingTotals(p, b);
+  if (b.editing){
+    const bk = S.bookings.find(x => x.id === b.editing);
+    Object.assign(bk, { date: DAYS[b.day].toISOString(), time: SLOTS[b.slot], status: 'requested' });
+    pushMsg(bk.id, 'sys', `Rescheduled to ${fmtDate(DAYS[b.day])}, ${SLOTS[b.slot]}`);
+    save(); S.booking = null;
+    toast('Rescheduled. Waiting for ' + p.name.split(' ')[0] + ' to confirm the new time.');
+    autoConfirm(bk.id);
+    go('bookings'); return;
+  }
+  const id = 'FH-' + (40300 + Math.floor(Math.random() * 9000));
+  const bk = { id, pro: p.id, pkg: b.pkg, pkgName: t.k.n + (t.k.hourly ? ` · ${b.hours}h` : ''), price: t.base, date: DAYS[b.day].toISOString(), time: SLOTS[b.slot], addr: t.k.remote ? 'Remote — upload link sent by email' : b.addr.trim(), notes: b.notes.trim(), addons: b.addons.slice(), fee: t.fee, total: t.total, status: 'requested', created: new Date().toISOString() };
+  S.bookings.unshift(bk);
+  S.chats[id] = [{ from:'sys', text:`Booking ${id} requested · ${fmtDate(DAYS[b.day])}, ${SLOTS[b.slot]}` }];
+  save(); S.booking = null;
+  go('done-' + id);
+  autoConfirm(id);
+}
+function autoConfirm(id){
+  setTimeout(() => {
+    const bk = S.bookings.find(x => x.id === id); if (!bk || bk.status !== 'requested') return;
+    const p = PRO[bk.pro];
+    bk.status = 'confirmed';
+    const first = p.name.split(' ')[0];
+    const d = new Date(bk.date);
+    pushMsg(id, 'them', bk.notes
+      ? `Hi! ${first} here, and I’m confirmed for ${fmtDay(d)} at ${bk.time}. Thanks for the notes. I read them and I’ll plan around them. Anything else I should know about the space?`
+      : `Hi! ${first} here, and I’m confirmed for ${fmtDay(d)} at ${bk.time}. What will you use the photos for? Knowing that helps me plan the shots.`);
+    save();
+    toast(`${first} confirmed your booking for ${fmtDate(d)}.`);
+    const r = parse(); if ((r.name === 'done' && r.id === id) || r.name === 'bookings') render();
+  }, 3200);
+}
+function pushMsg(id, from, text){ (S.chats[id] = S.chats[id] || []).push({ from, text }); }
+
+function vDone(bk){
+  const p = PRO[bk.pro]; const d = new Date(bk.date);
+  const conf = bk.status === 'confirmed';
+  const msgs = S.chats[bk.id] || [];
+  const first = p.name.split(' ')[0];
+  return `<div class="wrap"><div class="done">
+    <div>
+      <div class="done-hero"><span class="done-check">${I.check}</span><div>
+        <h1>${conf ? `You’re booked with ${first}` : `Request sent to ${first}`}</h1>
+        <p class="muted" style="margin-top:6px">${fmtLong(d)} at ${bk.time} · ${esc(bk.pkgName)}</p>
+        <span class="ref"><span class="pill ${bk.status}">${bk.status[0].toUpperCase() + bk.status.slice(1)}</span><span class="mono muted">Ref ${bk.id}</span></span>
+      </div></div>
+      <ol class="timeline">
+        <li class="ok"><span class="dot">${I.check}</span><div><b>Request sent</b><span>Just now · you haven’t been charged</span></div></li>
+        <li class="${conf ? 'ok' : 'now'}"><span class="dot">${conf ? I.check : ''}</span><div><b>${first} confirms</b><span>${conf ? 'Confirmed. Details are in your chat.' : `Usually within ${p.resp}`}</span></div></li>
+        <li class="${conf ? 'now' : ''}"><span class="dot"></span><div><b>Shoot day · ${fmtDate(d)}</b><span>${esc(bk.addr)}</span></div></li>
+        <li><span class="dot"></span><div><b>Private gallery delivered</b><span>${bk.addons.includes('rush') ? 'Within 24 hours' : 'Within 48 hours'} of the shoot. Then we charge ${money2(bk.total)}.</span></div></li>
+      </ol>
+      <div class="actions">
+        <button class="btn btn-ghost" data-action="copycal" data-id="${bk.id}">${I.cal}Copy calendar details</button>
+        <button class="btn btn-ghost" data-go="bookings">View my bookings</button>
+        <button class="btn-text" data-go="browse">Book another photographer</button>
+      </div>
+      <textarea id="cal-fallback" class="textarea" readonly hidden style="margin-top:12px;min-height:90px"></textarea>
+    </div>
+    <aside class="card chat" aria-label="Chat with ${p.name}">
+      <div class="chat-head">${avatar(p)}<div><strong>${p.name}</strong><span class="mono">● usually replies in ${p.resp}</span></div></div>
+      <div class="msgs" id="msgs">${msgs.map(m => `<div class="msg ${m.from}">${esc(m.text)}</div>`).join('')}${!conf ? `<div class="msg them" aria-label="${first} is typing"><span class="typing"><i></i><i></i><i></i></span></div>` : ''}</div>
+      <form id="chat-form" data-id="${bk.id}"><input class="input" id="chat-in" placeholder="Message ${first}…" autocomplete="off" aria-label="Message"><button class="btn btn-primary" type="submit">Send</button></form>
+    </aside>
+  </div></div>`;
+}
+function scrollChat(){ const m = $('#msgs'); if (m) m.scrollTop = m.scrollHeight; }
+const REPLIES = [
+  'Sounds good, noted! I’ll bring a backup reflector just in case.',
+  'Perfect. I’ll arrive about 10 minutes early to scout the light.',
+  'Great question. Yes, that’s included, no extra charge.',
+  'Got it 👍 I’ll send a quick prep checklist the night before.',
+];
+
+function vBookings(){
+  const up = S.bookings.filter(b => b.status !== 'completed' && b.status !== 'cancelled' && new Date(b.date) >= TODAY);
+  const past = S.bookings.filter(b => !up.includes(b));
+  const list = S.bkTab === 'upcoming' ? up : past;
+  return `<div class="wrap" style="padding-block:32px 80px;max-width:880px">
+    <h1 style="font-size:2rem">My bookings</h1>
+    <div class="tabs" role="tablist"><button role="tab" class="${S.bkTab === 'upcoming' ? 'on' : ''}" aria-selected="${S.bkTab === 'upcoming'}" data-action="tab" data-t="upcoming">Upcoming (${up.length})</button><button role="tab" class="${S.bkTab === 'past' ? 'on' : ''}" aria-selected="${S.bkTab === 'past'}" data-action="tab" data-t="past">Past (${past.length})</button></div>
+    <div class="list">${list.length ? list.map(bkCard).join('') : `<div class="empty"><h3>${S.bkTab === 'upcoming' ? 'Nothing booked yet' : 'No past bookings'}</h3><p>${S.bkTab === 'upcoming' ? 'Find a photographer nearby. Most have openings this week.' : 'Completed and cancelled shoots show up here.'}</p><button class="btn btn-primary" data-go="browse">Find a photographer</button></div>`}</div>
+  </div>`;
+}
+function bkCard(bk){
+  const p = PRO[bk.pro]; const d = new Date(bk.date);
+  const up = bk.status === 'requested' || bk.status === 'confirmed';
+  const ph = p.portfolio[0];
+  return `<article class="bk">
+    <div class="ph">${img(ph.kind, ph.seed, '', 200, 200)}</div>
+    <div>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap"><h3>${esc(bk.pkgName)}</h3><span class="pill ${bk.status}">${bk.status[0].toUpperCase() + bk.status.slice(1)}</span></div>
+      <div class="meta"><span>with ${p.name}</span><span>${I.cal}${fmtDate(d)}, ${bk.time}</span><span>${I.pin}${esc(bk.addr)}</span><span class="tnum">${money2(bk.total)}</span></div>
+      ${bk.status === 'completed' ? `<div class="delivered">${p.portfolio.slice(0,5).map(x => `<div class="ph">${img(x.kind, x.seed + 'd', '', 120, 120)}</div>`).join('')}</div><p class="muted" style="font-size:.85rem;margin-top:6px">${I.image.replace('<svg','<svg style="width:14px;height:14px;vertical-align:-2px"')} ${bk.delivered || 18} photos delivered</p>` : ''}
+      ${S.cancelId === bk.id ? `<div class="confirm-box"><p>Cancel this shoot? ${(d - Date.now()) > 864e5 ? 'It’s free because it’s more than 24 hours away.' : 'It’s within 24 hours, so a 50% fee applies.'}</p><div style="display:flex;gap:8px"><button class="btn btn-ghost btn-sm" data-action="keep">Keep booking</button><button class="btn btn-danger btn-sm" data-action="do-cancel" data-id="${bk.id}">Cancel booking</button></div></div>` : ''}
+      ${S.reviewId === bk.id ? `<div class="review-box"><b>How did ${p.name.split(' ')[0]} do?</b><div class="star-pick" role="radiogroup" aria-label="Rating">${[1,2,3,4,5].map(n => `<button class="${n <= S.reviewDraft.stars ? 'on' : ''}" data-action="rstar" data-n="${n}" aria-label="${n} star${n > 1 ? 's' : ''}" role="radio" aria-checked="${n === S.reviewDraft.stars}">${I.star}</button>`).join('')}</div><textarea class="textarea" id="r-text" placeholder="What stood out? Your review helps neighbors choose." style="min-height:90px">${esc(S.reviewDraft.text)}</textarea><div style="display:flex;gap:8px;justify-content:flex-end"><button class="btn btn-ghost btn-sm" data-action="rcancel">Not now</button><button class="btn btn-primary btn-sm" data-action="rsubmit" data-id="${bk.id}">Post review</button></div></div>` : ''}
+      ${bk.review ? `<div class="review-box"><div style="display:flex;gap:8px;align-items:center">${stars(bk.review.stars)}<span class="muted" style="font-size:.85rem">Your review</span></div>${bk.review.text ? `<p>${esc(bk.review.text)}</p>` : ''}</div>` : ''}
+      <div class="acts">
+        ${up && S.cancelId !== bk.id ? `<button class="btn btn-ghost btn-sm" data-go="done-${bk.id}">${I.chat}Message</button><button class="btn btn-ghost btn-sm" data-action="resched" data-id="${bk.id}">Reschedule</button><button class="btn-text" data-action="cancel" data-id="${bk.id}" style="color:var(--bad)">Cancel</button>` : ''}
+        ${bk.status === 'completed' && !bk.review && S.reviewId !== bk.id ? `<button class="btn btn-primary btn-sm" data-action="review" data-id="${bk.id}">${I.star}Leave a review</button>` : ''}
+        ${!up ? `<button class="btn btn-ghost btn-sm" data-action="book" data-pro="${p.id}" data-pkg="${bk.pkg}">Book ${p.name.split(' ')[0]} again</button>` : ''}
+      </div>
+    </div>
+  </article>`;
+}
+
+/* ============ lightbox ============ */
+function openLb(pid, i){ S.lb = { pid, i, ret: document.activeElement }; drawLb(); }
+function drawLb(){
+  const lb = $('#lb');
+  if (!S.lb){ lb.hidden = true; lb.innerHTML = ''; document.body.style.overflow = ''; return; }
+  const p = PRO[S.lb.pid], ph = p.portfolio[S.lb.i];
+  lb.innerHTML = `<button class="x" data-action="lb-close" aria-label="Close">${I.x}</button>
+    <button class="nav-l" data-action="lb-step" data-d="-1" aria-label="Previous photo">${I.chevL}</button>
+    <figure><div class="ph">${img(ph.kind, ph.seed, CAT[ph.cat].name + ' photo by ' + p.name, 800, 1000)}</div>
+    <figcaption><span>${p.name} · ${CAT[ph.cat].name}</span><span>Photo: ${esc(credit(ph.kind, ph.seed))} / Unsplash</span><span>${S.lb.i + 1} / ${p.portfolio.length}</span></figcaption></figure>
+    <button class="nav-r" data-action="lb-step" data-d="1" aria-label="Next photo">${I.chevR}</button>`;
+  lb.hidden = false; document.body.style.overflow = 'hidden';
+  $('.x', lb).focus();
+}
+
+/* ============ toast ============ */
+let toastT;
+function toast(msg){
+  const t = $('#toast'); t.innerHTML = I.check.replace('stroke="currentColor"','stroke="currentColor" style="color:var(--film)"') + '<span>' + esc(msg) + '</span>';
+  t.classList.add('show'); clearTimeout(toastT); toastT = setTimeout(() => t.classList.remove('show'), 3400);
+}
+
+/* ============ events ============ */
+function runSearch(){
+  S.f.cats = []; S.loading = true; go('browse');
+  setTimeout(() => { S.loading = false; if (parse().name === 'browse') render(); }, 350);
+}
+document.addEventListener('click', e => {
+  const g = e.target.closest('[data-go]');
+  if (g){ e.preventDefault(); go(g.dataset.go); return; }
+  const a = e.target.closest('[data-action]'); if (!a) return;
+  const act = a.dataset.action;
+  const b = S.booking, p = b && PRO[b.pro];
+  switch (act){
+    case 'how': if (parse().name !== 'home') go('home'); $('#how')?.scrollIntoView(); break;
+    case 'quick': S.q = a.dataset.q; runSearch(); break;
+    case 'cat': S.q = ''; runSearch(); S.f.cats = [a.dataset.cat]; render(); break;
+    case 'become': toast('Pro applications aren’t part of this prototype yet.'); break;
+    case 'fcat': { const c = a.dataset.cat; const cur = filtered().cats.slice(); S.q = ''; S.f.cats = cur.includes(c) ? cur.filter(x => x !== c) : [...cur, c]; render(); break; }
+    case 'reset': S.q = ''; S.when = 'any'; S.f = { cats: [], max: 600, minRating: 0, rush: false, elite: false, sort: S.f.sort }; render(); break;
+    case 'toggle-filters': S.filtersOpen = !S.filtersOpen; render(); break;
+    case 'lb': openLb(a.dataset.pro, +a.dataset.i); break;
+    case 'lb-close': { const r = S.lb?.ret; S.lb = null; drawLb(); r?.focus?.(); break; }
+    case 'lb-step': { const n = PRO[S.lb.pid].portfolio.length; S.lb.i = (S.lb.i + +a.dataset.d + n) % n; drawLb(); break; }
+    case 'book': {
+      const o = {}; if (a.dataset.pkg != null) o.pkg = +a.dataset.pkg; if (a.dataset.day != null){ o.day = +a.dataset.day; o.slot = +a.dataset.slot; }
+      startBooking(a.dataset.pro, o); break;
+    }
+    case 'pkg': if (e.target.closest('[data-stop]')) break; b.pkg = +a.dataset.i; render(); break;
+    case 'hrs': e.stopPropagation(); b.hours = Math.max(1, Math.min(8, b.hours + +a.dataset.d)); render(); break;
+    case 'day': b.day = +a.dataset.i; b.slot = null; b.err = {}; render(); break;
+    case 'slot': b.slot = +a.dataset.k; b.err = {}; render(); break;
+    case 'sugg': { const ta = $('#b-notes'); b.notes = (ta.value.trim() ? ta.value.trim() + '\n' : '') + a.dataset.s; render(); $('#b-notes')?.focus(); break; }
+    case 'step': b.step = +a.dataset.s; render(); window.scrollTo(0,0); break;
+    case 'prev': b.step = Math.max(0, b.step - 1); b.err = {}; render(); window.scrollTo(0,0); break;
+    case 'next': {
+      syncFields();
+      if (!validate(b, p)){ render(); const er = $('.errmsg'); er?.scrollIntoView({ block:'center' }); if (b.err.addr) $('#b-addr')?.focus(); break; }
+      if (b.step === 3){ submitBooking(p, b); break; }
+      b.step++; render(); window.scrollTo(0,0); break;
+    }
+    case 'copycal': {
+      const bk = S.bookings.find(x => x.id === a.dataset.id), pr = PRO[bk.pro];
+      const txt = `Photo shoot with ${pr.name} (Framehand ${bk.id})\n${fmtLong(new Date(bk.date))}, ${bk.time}\n${bk.addr}\n${bk.pkgName}`;
+      const fb = () => { const ta = $('#cal-fallback'); ta.value = txt; ta.hidden = false; ta.select(); toast('Select and copy the details below.'); };
+      try { navigator.clipboard.writeText(txt).then(() => toast('Calendar details copied. Paste them into your calendar.'), fb); } catch { fb(); }
+      break;
+    }
+    case 'tab': S.bkTab = a.dataset.t; S.cancelId = null; render(); break;
+    case 'cancel': S.cancelId = a.dataset.id; render(); break;
+    case 'keep': S.cancelId = null; render(); break;
+    case 'do-cancel': { const bk = S.bookings.find(x => x.id === a.dataset.id); bk.status = 'cancelled'; S.cancelId = null; save(); toast('Booking cancelled. You won’t be charged.'); render(); break; }
+    case 'resched': {
+      const bk = S.bookings.find(x => x.id === a.dataset.id);
+      const pr = PRO[bk.pro];
+      S.booking = { pro: pr.id, step: 1, pkg: bk.pkg, hours: 2, day: null, slot: null, addr: bk.addr, notes: bk.notes, addons: bk.addons.slice(), agree: true, err: {}, editing: bk.id };
+      go('book-' + pr.id); break;
+    }
+    case 'review': S.reviewId = a.dataset.id; S.reviewDraft = { stars: 5, text: '' }; render(); $('#r-text')?.focus(); break;
+    case 'rstar': S.reviewDraft.text = $('#r-text')?.value || ''; S.reviewDraft.stars = +a.dataset.n; render(); break;
+    case 'rcancel': S.reviewId = null; render(); break;
+    case 'rsubmit': {
+      const bk = S.bookings.find(x => x.id === a.dataset.id);
+      bk.review = { stars: S.reviewDraft.stars, text: ($('#r-text')?.value || '').trim() };
+      PRO[bk.pro].reviews.unshift({ cat: PRO[bk.pro].cats[0], who: 'You', stars: bk.review.stars, text: bk.review.text || 'Great shoot.', when: 'just now' });
+      S.reviewId = null; save(); toast('Thanks! Your review is live on ' + PRO[bk.pro].name.split(' ')[0] + '’s profile.'); render(); break;
+    }
+  }
+});
+function syncFields(){
+  const b = S.booking; if (!b) return;
+  const ad = $('#b-addr'); if (ad) b.addr = ad.value;
+  const nt = $('#b-notes'); if (nt) b.notes = nt.value;
+  const ag = $('#b-agree'); if (ag) b.agree = ag.checked;
+}
+document.addEventListener('submit', e => {
+  e.preventDefault();
+  if (e.target.id === 'search'){ S.q = $('#q').value; S.hood = $('#hood').value; S.when = $('#when').value; runSearch(); }
+  if (e.target.id === 'chat-form'){
+    const inp = $('#chat-in'), text = inp.value.trim(); if (!text) return;
+    const id = e.target.dataset.id; pushMsg(id, 'me', text); save(); inp.value = '';
+    const m = $('#msgs'); m.insertAdjacentHTML('beforeend', `<div class="msg me">${esc(text)}</div><div class="msg them" id="typing"><span class="typing"><i></i><i></i><i></i></span></div>`); scrollChat();
+    setTimeout(() => {
+      const n = (S.chats[id] || []).filter(x => x.from === 'me').length;
+      pushMsg(id, 'them', REPLIES[(n - 1) % REPLIES.length]); save();
+      $('#typing')?.remove();
+      const mm = $('#msgs'); if (mm && $('#chat-form')?.dataset.id === id){ mm.insertAdjacentHTML('beforeend', `<div class="msg them">${esc(REPLIES[(n - 1) % REPLIES.length])}</div>`); scrollChat(); }
+    }, 1500);
+  }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.id === 'f-hood'){ S.hood = t.value; render(); }
+  else if (t.id === 'f-when'){ S.when = t.value; render(); }
+  else if (t.id === 'f-rating'){ S.f.minRating = +t.value; render(); }
+  else if (t.id === 'f-rush'){ S.f.rush = t.checked; render(); }
+  else if (t.id === 'f-elite'){ S.f.elite = t.checked; render(); }
+  else if (t.id === 'f-sort'){ S.f.sort = t.value; render(); }
+  else if (t.id === 'f-max'){ S.f.max = +t.value; render(); }
+  else if (t.dataset.addon){ syncFields(); const b = S.booking; b.addons = t.checked ? [...b.addons, t.dataset.addon] : b.addons.filter(x => x !== t.dataset.addon); render(); }
+  else if (t.id === 'b-agree'){ S.booking.agree = t.checked; S.booking.err = {}; }
+});
+document.addEventListener('input', e => {
+  if (e.target.id === 'f-max'){ $('#f-max-v').textContent = +e.target.value >= 600 ? 'Any' : money(+e.target.value); }
+  if (e.target.id === 'b-addr' || e.target.id === 'b-notes') syncFields();
+});
+document.addEventListener('keydown', e => {
+  if (!S.lb && (e.key === 'Enter' || e.key === ' ') && e.target.matches?.('.opt[role=radio]')){ e.preventDefault(); e.target.click(); return; }
+  if (!S.lb) return;
+  if (e.key === 'Escape'){ const r = S.lb.ret; S.lb = null; drawLb(); r?.focus?.(); }
+  else if (e.key === 'ArrowRight' || e.key === 'ArrowLeft'){ const n = PRO[S.lb.pid].portfolio.length; S.lb.i = (S.lb.i + (e.key === 'ArrowRight' ? 1 : -1) + n) % n; drawLb(); }
+  else if (e.key === 'Tab'){ const f = [...$('#lb').querySelectorAll('button')]; const i = f.indexOf(document.activeElement); e.preventDefault(); f[(i + (e.shiftKey ? -1 : 1) + f.length) % f.length].focus(); }
+});
+$('#lb').addEventListener('click', e => { if (e.target.id === 'lb'){ S.lb = null; drawLb(); } });
+
+updateCount();
+render();
+})();
+</script>
